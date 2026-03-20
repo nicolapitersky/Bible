@@ -38,13 +38,14 @@ jobs:
           node-version: '22'
 
       - name: Validate env-manifest schema is valid JSON Schema
-        run: node -e "
-          const schema = require('./schemas/env-manifest.schema.json');
-          const Ajv = require('ajv');
-          const ajv = new Ajv();
-          ajv.compile(schema);
-          console.log('✓ env-manifest.schema.json is valid JSON Schema');
-        " || echo 'Schema validation skipped (ajv not installed)'
+        run: |
+          node -e "
+            const schema = require('./schemas/env-manifest.schema.json');
+            const Ajv = require('ajv');
+            const ajv = new Ajv();
+            ajv.compile(schema);
+            console.log('env-manifest.schema.json is valid JSON Schema');
+          " || echo 'Schema validation skipped (ajv not installed)'
 
   # ── Validate scripts run without error ───────────────────────────────────────
   validate-scripts:
