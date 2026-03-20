@@ -6,10 +6,7 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [main, staging]
-  push:
-    branches: [main, staging]
+  workflow_dispatch:
 
 # Cancel in-progress runs for the same branch
 concurrency:

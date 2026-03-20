@@ -1,7 +1,0 @@
-Contact: mailto:support@osipov.uk
-Contact: https://www.osipov.uk
-Expires: 2027-03-20T00:00:00.000Z
-Preferred-Languages: en
-Canonical: https://bible.osipov.uk/.well-known/security.txt
-Policy: https://bible.osipov.uk/SECURITY.md
-Acknowledgments: https://github.com/nicolapitersky/Bible
