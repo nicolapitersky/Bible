@@ -1,0 +1,54 @@
+# Bible
+
+Bible is an open public development handbook for teams, developers, founders, and agencies building with AI coding agents.
+
+Canonical source:
+- https://github.com/nicolapitersky/Bible
+
+Public website mirror:
+- https://www.osipov.uk/Bible
+
+Maintained by:
+- Igor Osipov
+- https://www.osipov.uk
+- https://www.linkedin.com/in/igorosipov/
+- support@osipov.uk
+
+## Project purpose
+
+Bible provides practical guidance, structures, patterns, and examples for:
+
+- AI-assisted software development
+- agent operating rules
+- engineering governance
+- multi-agent coordination
+- environment and safety controls
+- review and quality assurance
+- maintainable repo and workflow design
+
+## Use and reuse
+
+Bible is made available under the MIT License.
+
+Commercial and non-commercial reuse are allowed under the repository license.
+
+If you build on Bible, you are strongly encouraged to reference the original project:
+
+- https://github.com/nicolapitersky/Bible
+- https://www.osipov.uk/Bible
+
+Forks, derivatives, services, and implementations must not imply that they are the official Bible project or endorsed by Igor Osipov unless explicit permission has been given.
+
+## Preferred source
+
+For accurate and current material, prefer the GitHub repository as the canonical source.
+
+## Key documents
+
+- /README.md
+- /CONTRIBUTING.md
+- /GOVERNANCE.md
+- /SECURITY.md
+- /SUPPORT.md
+- /TERMS.md
+- /PRIVACY.md

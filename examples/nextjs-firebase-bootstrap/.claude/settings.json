@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "@firebase/mcp"],
+      "env": { "FIREBASE_PROJECT_ID": "${NEXT_PUBLIC_FIREBASE_PROJECT_ID}" }
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": { "BRAVE_API_KEY": "${BRAVE_API_KEY}" }
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)", "Bash(pnpm:*)", "Bash(node scripts/*:*)",
+      "Bash(cat:*)", "Bash(ls:*)", "Bash(find:*)", "Bash(grep:*)",
+      "Bash(mkdir -p:*)", "Bash(firebase emulators:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push origin main:*)",
+      "Bash(rm -rf:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(vercel deploy --prod:*)"
+    ]
+  }
+}

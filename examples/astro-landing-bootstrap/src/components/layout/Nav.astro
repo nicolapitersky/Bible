@@ -1,0 +1,213 @@
+---
+/**
+ * Nav.astro — Site navigation
+ * Responsive. Accessible. Token-based only.
+ * Mobile: hamburger menu. Desktop: horizontal links.
+ */
+import Button from '../ui/Button.astro';
+
+const navLinks = [
+  { label: 'Features', href: '/features' },
+  { label: 'Pricing',  href: '/pricing'  },
+  { label: 'Blog',     href: '/blog'     },
+  { label: 'Docs',     href: 'https://docs.acme.app', external: true },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header
+  class="sticky top-0 z-sticky bg-surface-background/80 backdrop-blur-sm
+         border-b border-border"
+  role="banner"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center gap-2 font-bold text-xl text-text-primary
+               focus-visible:outline-2 focus-visible:outline-offset-4
+               focus-visible:outline-border-focus rounded-sm"
+        aria-label="Acme — Go to homepage"
+      >
+        <!-- Logo mark — token colours only -->
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 28 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <rect width="28" height="28" rx="6" fill="var(--color-brand-accent)" />
+          <path
+            d="M8 20L14 8L20 20M10.5 15.5H17.5"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Acme
+      </a>
+
+      <!-- Desktop nav -->
+      <nav
+        aria-label="Main navigation"
+        class="hidden md:flex items-center gap-1"
+      >
+        {navLinks.map(({ label, href, external }) => (
+          <a
+            href={href}
+            {...external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+            class:list={[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors duration-fast',
+              'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-focus',
+              currentPath === href
+                ? 'text-text-primary bg-surface-2'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-2',
+            ]}
+            {...currentPath === href ? { 'aria-current': 'page' } : {}}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Desktop CTA -->
+      <div class="hidden md:flex items-center gap-3">
+        <a
+          href="/login"
+          class="text-sm font-medium text-text-secondary hover:text-text-primary
+                 transition-colors duration-fast px-3 py-2 rounded-md
+                 hover:bg-surface-2"
+        >
+          Log in
+        </a>
+        <Button href="/signup" variant="accent" size="sm">
+          Get started free
+        </Button>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-toggle"
+        type="button"
+        class="md:hidden p-2 rounded-md text-text-secondary hover:text-text-primary
+               hover:bg-surface-2 transition-colors duration-fast
+               focus-visible:outline-2 focus-visible:outline-offset-2
+               focus-visible:outline-border-focus"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open navigation menu"
+      >
+        <svg
+          id="icon-open"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 5H17M3 10H17M3 15H17"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+        <svg
+          id="icon-close"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          aria-hidden="true"
+          class="hidden"
+        >
+          <path
+            d="M5 5L15 15M15 5L5 15"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div
+      id="mobile-menu"
+      class="hidden md:hidden border-t border-border pb-4"
+      role="navigation"
+      aria-label="Mobile navigation"
+    >
+      <div class="pt-4 flex flex-col gap-1">
+        {navLinks.map(({ label, href, external }) => (
+          <a
+            href={href}
+            {...external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+            class:list={[
+              'px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-fast',
+              currentPath === href
+                ? 'text-text-primary bg-surface-2'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-2',
+            ]}
+          >
+            {label}
+          </a>
+        ))}
+        <div class="mt-3 pt-3 border-t border-border flex flex-col gap-2">
+          <a href="/login" class="px-3 py-2.5 text-sm font-medium text-text-secondary text-center">
+            Log in
+          </a>
+          <Button href="/signup" variant="accent" size="md" fullWidth>
+            Get started free
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle — minimal vanilla JS, no framework needed
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu   = document.getElementById('mobile-menu');
+  const iconOpen  = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    const next   = !isOpen;
+
+    toggle.setAttribute('aria-expanded', String(next));
+    toggle.setAttribute('aria-label', next ? 'Close navigation menu' : 'Open navigation menu');
+    menu?.classList.toggle('hidden', !next);
+    iconOpen?.classList.toggle('hidden', next);
+    iconClose?.classList.toggle('hidden', !next);
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!toggle?.contains(e.target as Node) && !menu?.contains(e.target as Node)) {
+      toggle?.setAttribute('aria-expanded', 'false');
+      menu?.classList.add('hidden');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      toggle?.setAttribute('aria-expanded', 'false');
+      menu?.classList.add('hidden');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+      toggle?.focus();
+    }
+  });
+</script>

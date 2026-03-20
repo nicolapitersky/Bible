@@ -1,0 +1,116 @@
+# Copy to: .github/workflows/weekly-quality.yml
+
+name: Weekly Quality Run
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Monday 06:00 UTC
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  weekly-quality:
+    name: Weekly quality audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for secret scanning
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Dependency audit
+        id: audit
+        run: |
+          pnpm audit --json > audit-report.json 2>&1 || true
+          VULN_COUNT=$(cat audit-report.json | node -e "
+            const d = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            console.log(d.metadata?.vulnerabilities?.total || 0);
+          ")
+          echo "vulnerabilities=$VULN_COUNT" >> $GITHUB_OUTPUT
+        continue-on-error: true
+      
+      - name: Outdated dependencies
+        id: outdated
+        run: pnpm outdated --json > outdated-report.json 2>&1 || true
+        continue-on-error: true
+      
+      - name: Dead code detection
+        run: pnpm knip --reporter json > knip-report.json 2>&1 || true
+        continue-on-error: true
+      
+      - name: Console.log sweep
+        id: consolelogs
+        run: |
+          COUNT=$(grep -r "console\.log" src/ --include="*.ts" --include="*.tsx" \
+                  --include="*.js" 2>/dev/null | wc -l || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+      
+      - name: TODO/FIXME sweep
+        id: todos
+        run: |
+          COUNT=$(grep -r "TODO\|FIXME\|HACK\|XXX" src/ --include="*.ts" \
+                  --include="*.tsx" --include="*.dart" 2>/dev/null | wc -l || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+      
+      - name: Secret scan (recent commits)
+        run: |
+          if command -v gitleaks &> /dev/null; then
+            gitleaks detect --source=. --log-opts="-n 50" --report-format=json \
+              --report-path=gitleaks-report.json --quiet || true
+          fi
+        continue-on-error: true
+      
+      - name: Create quality report issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const vulns = '${{ steps.audit.outputs.vulnerabilities }}' || '?';
+            const consoleLogs = '${{ steps.consolelogs.outputs.count }}' || '0';
+            const todos = '${{ steps.todos.outputs.count }}' || '0';
+            
+            const body = `## Weekly Quality Report — ${date}
+            
+            ### Summary
+            
+            | Check | Result | Status |
+            |-------|--------|--------|
+            | Dependency vulnerabilities | ${vulns} total | ${vulns > 0 ? '⚠️' : '✅'} |
+            | Stray console.logs | ${consoleLogs} | ${consoleLogs > 0 ? '⚠️' : '✅'} |
+            | Unlogged TODO/FIXME/HACK | ${todos} | ${todos > 5 ? '⚠️' : '✅'} |
+            
+            ### Action Required
+            
+            Review the full CI run for detailed reports on each check.
+            Update \`docs/TECH_DEBT.md\` with any new items.
+            Address all HIGH and CRITICAL findings before next sprint.
+            
+            ### Checklist
+            - [ ] Review dependency vulnerabilities
+            - [ ] Check outdated packages
+            - [ ] Review dead code report
+            - [ ] Address console.logs in production code
+            - [ ] Ensure all TODOs are in TECH_DEBT.md
+            - [ ] Review and prioritise TECH_DEBT.md
+            - [ ] Check AEO/SEO (llms.txt up to date?)
+            - [ ] Verify performance budgets not regressed
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Weekly Quality Report — ${date}`,
+              body,
+              labels: ['weekly-quality'],
+            });

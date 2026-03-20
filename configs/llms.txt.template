@@ -1,0 +1,70 @@
+# {{PROJECT_NAME}}
+
+> {{PROJECT_DESCRIPTION}}
+
+## What We Do
+
+{{COMPANY_DESCRIPTION_PARAGRAPH_1}}
+
+{{COMPANY_DESCRIPTION_PARAGRAPH_2}}
+
+{{COMPANY_DESCRIPTION_PARAGRAPH_3}}
+
+## Key Facts
+
+- **Founded:** {{FOUNDED_YEAR}}
+- **Based in:** {{LOCATION}}
+- **Products:** {{PRODUCTS_LIST}}
+- **Who we serve:** {{TARGET_CUSTOMER_DESCRIPTION}}
+- **Pricing model:** {{PRICING_DESCRIPTION}}
+
+## Our Products
+
+{{PRODUCTS_DETAILED_DESCRIPTION}}
+
+## Key Pages
+
+- [Homepage]({{SITE_URL}}/) — Overview of what we do
+- [Products]({{SITE_URL}}/products) — Our full product offering
+- [Pricing]({{SITE_URL}}/pricing) — Pricing plans and options
+- [About]({{SITE_URL}}/about) — Our story and team
+- [Blog]({{SITE_URL}}/blog) — Articles, guides, and resources
+- [Documentation]({{SITE_URL}}/docs) — Technical documentation
+- [Contact]({{SITE_URL}}/contact) — Get in touch
+
+## Frequently Asked Questions
+
+**{{FAQ_1_QUESTION}}**
+{{FAQ_1_ANSWER}}
+
+**{{FAQ_2_QUESTION}}**
+{{FAQ_2_ANSWER}}
+
+**{{FAQ_3_QUESTION}}**
+{{FAQ_3_ANSWER}}
+
+**{{FAQ_4_QUESTION}}**
+{{FAQ_4_ANSWER}}
+
+**{{FAQ_5_QUESTION}}**
+{{FAQ_5_ANSWER}}
+
+## What We Are NOT
+
+{{CLARIFICATIONS_ABOUT_WHAT_YOU_ARE_NOT}}
+
+## Technical
+
+- **API documentation:** {{API_DOCS_URL}}
+- **Status page:** {{STATUS_PAGE_URL}}
+- **Developer documentation:** {{DEV_DOCS_URL}}
+
+## Contact
+
+- **Support:** {{SUPPORT_EMAIL}}
+- **Sales:** {{SALES_EMAIL}}
+- **Press:** {{PRESS_EMAIL}}
+
+---
+*Last updated: {{LAST_UPDATED_DATE}}*
+*This file follows the llms.txt standard: https://llmstxt.org*

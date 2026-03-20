@@ -1,0 +1,126 @@
+---
+/**
+ * Hero.astro — Homepage hero section
+ * Above the fold. Maximum impact. Zero JS. Token-based.
+ * LCP target: < 1.5s — no blocking resources, preloaded image.
+ */
+import Section from '../ui/Section.astro';
+import Button from '../ui/Button.astro';
+---
+
+<Section size="xl" aria-label="Hero">
+  <div class="text-center max-w-4xl mx-auto">
+
+    <!-- Eyebrow label -->
+    <div
+      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium
+             bg-brand-accent-subtle text-brand-accent border border-brand-accent/20 mb-8"
+    >
+      <span
+        class="w-1.5 h-1.5 rounded-full bg-brand-accent animate-pulse"
+        aria-hidden="true"
+      ></span>
+      Now in public beta &mdash; free for teams up to 5
+    </div>
+
+    <!-- Headline -->
+    <h1
+      class="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary
+             tracking-tighter leading-tight"
+    >
+      The platform that powers
+      <span class="text-brand-accent"> modern teams</span>
+    </h1>
+
+    <!-- Subheadline -->
+    <p
+      class="mt-6 text-lg sm:text-xl text-text-secondary leading-relaxed
+             max-w-2xl mx-auto"
+    >
+      Ship faster. Collaborate better. Build products your customers love.
+      Acme brings your tasks, docs, and team into one workspace that
+      actually works.
+    </p>
+
+    <!-- CTA buttons -->
+    <div
+      class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
+    >
+      <Button href="/signup" variant="accent" size="lg">
+        Get started — it's free
+      </Button>
+      <Button href="/demo" variant="secondary" size="lg">
+        Watch 2-min demo
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+          class="ml-1"
+        >
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path
+            d="M6.5 5.5L10.5 8L6.5 10.5V5.5Z"
+            fill="currentColor"
+          />
+        </svg>
+      </Button>
+    </div>
+
+    <!-- Social proof — below CTA -->
+    <p class="mt-8 text-sm text-text-tertiary">
+      Trusted by
+      <strong class="text-text-secondary font-medium">10,000+ teams</strong>
+      at companies like Stripe, Vercel, and Linear
+    </p>
+  </div>
+
+  <!-- Hero image / product screenshot -->
+  <div class="mt-16 relative">
+    <!-- Gradient fade at bottom -->
+    <div
+      class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t
+             from-surface-background to-transparent z-10 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Screenshot placeholder — replace with actual product image -->
+    <div
+      class="rounded-xl border border-border shadow-2xl overflow-hidden
+             bg-surface-2 aspect-[16/9] flex items-center justify-center"
+      role="img"
+      aria-label="Acme dashboard screenshot showing project overview"
+    >
+      <div class="text-center p-8">
+        <div
+          class="w-16 h-16 rounded-xl bg-brand-accent-subtle flex items-center
+                 justify-center mx-auto mb-4"
+          aria-hidden="true"
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 28 28"
+            fill="none"
+          >
+            <rect width="28" height="28" rx="6" fill="var(--color-brand-accent)"/>
+            <path
+              d="M8 20L14 8L20 20M10.5 15.5H17.5"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <p class="text-text-tertiary text-sm">
+          Product screenshot goes here
+        </p>
+        <p class="text-text-tertiary text-xs mt-1">
+          1200×675px · WebP · &lt;150kb
+        </p>
+      </div>
+    </div>
+  </div>
+</Section>

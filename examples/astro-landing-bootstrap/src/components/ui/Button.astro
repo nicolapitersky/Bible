@@ -1,0 +1,114 @@
+---
+/**
+ * Button.astro — Design system primitive
+ *
+ * Uses only design tokens. No hardcoded values.
+ * Every visual property is a token reference.
+ *
+ * Usage:
+ *   <Button variant="primary" size="md" href="/pricing">Get started</Button>
+ *   <Button variant="secondary" size="sm">Learn more</Button>
+ *   <Button variant="ghost" size="md" disabled>Unavailable</Button>
+ */
+
+interface Props {
+  /** Visual style */
+  variant?: 'primary' | 'secondary' | 'ghost' | 'accent';
+  /** Size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Renders as <a> when provided, <button> otherwise */
+  href?: string;
+  /** Open link in new tab (only with href) */
+  external?: boolean;
+  /** Disabled state */
+  disabled?: boolean;
+  /** Full width */
+  fullWidth?: boolean;
+  /** Additional classes */
+  class?: string;
+  /** HTML type attribute (only for button) */
+  type?: 'button' | 'submit' | 'reset';
+  /** Accessible label when button has no visible text */
+  'aria-label'?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  external = false,
+  disabled = false,
+  fullWidth = false,
+  type = 'button',
+  class: className = '',
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+
+// Size classes — all reference spacing and typography tokens via Tailwind
+const sizeClasses = {
+  sm: 'px-3 py-2 text-sm',
+  md: 'px-6 py-3 text-base',
+  lg: 'px-8 py-4 text-lg',
+};
+
+// Variant classes — all reference colour tokens via Tailwind
+const variantClasses = {
+  primary:   'bg-brand-primary text-text-inverse hover:bg-brand-primary/80 border border-brand-primary',
+  secondary: 'bg-transparent text-text-primary hover:bg-surface-2 border border-border',
+  ghost:     'bg-transparent text-text-primary hover:bg-surface-2 border-0',
+  accent:    'bg-brand-accent text-text-on-accent hover:bg-brand-accent-hover border border-brand-accent',
+};
+
+const baseClasses = [
+  'inline-flex items-center justify-center gap-2',
+  'font-medium rounded-md',
+  'transition-all duration-fast',
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent',
+  'disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
+  sizeClasses[size],
+  variantClasses[variant],
+  fullWidth ? 'w-full' : '',
+  className,
+].filter(Boolean).join(' ');
+---
+
+{href ? (
+  <a
+    href={href}
+    class={baseClasses}
+    {...external && { target: '_blank', rel: 'noopener noreferrer' }}
+    {...ariaLabel && { 'aria-label': ariaLabel }}
+    {...disabled && { 'aria-disabled': 'true', tabindex: '-1' }}
+  >
+    <slot />
+    {external && (
+      <svg
+        aria-hidden="true"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M3.5 3H1.5C1.22 3 1 3.22 1 3.5v7c0 .28.22.5.5.5h7c.28 0 .5-.22.5-.5V8.5M7 1h4m0 0v4M11 1L5 7"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    )}
+  </a>
+) : (
+  <button
+    type={type}
+    class={baseClasses}
+    disabled={disabled}
+    {...ariaLabel && { 'aria-label': ariaLabel }}
+  >
+    <slot />
+  </button>
+)}

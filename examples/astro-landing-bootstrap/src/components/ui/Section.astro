@@ -1,0 +1,72 @@
+---
+/**
+ * Section.astro — Page section wrapper
+ *
+ * Provides consistent vertical rhythm and max-width container.
+ * Every page section uses this. Never add raw padding to page sections.
+ *
+ * Usage:
+ *   <Section>...</Section>
+ *   <Section size="lg" background="alt">...</Section>
+ *   <Section id="pricing" aria-label="Pricing section">...</Section>
+ */
+
+interface Props {
+  /** Vertical padding size */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Background variant */
+  background?: 'default' | 'alt' | 'accent' | 'dark';
+  /** Container max-width */
+  container?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** HTML id */
+  id?: string;
+  /** Accessible section label */
+  'aria-label'?: string;
+  class?: string;
+}
+
+const {
+  size = 'md',
+  background = 'default',
+  container = 'xl',
+  id,
+  'aria-label': ariaLabel,
+  class: className = '',
+} = Astro.props;
+
+const sectionPadding = {
+  sm: 'py-12',
+  md: 'py-16 md:py-20',
+  lg: 'py-20 md:py-24',
+  xl: 'py-24 md:py-32',
+};
+
+const backgroundClasses = {
+  default: 'bg-surface-background',
+  alt:     'bg-surface-background-alt',
+  accent:  'bg-brand-accent-subtle',
+  dark:    'bg-brand-primary text-text-inverse',
+};
+
+const containerClasses = {
+  sm:   'max-w-2xl',
+  md:   'max-w-4xl',
+  lg:   'max-w-5xl',
+  xl:   'max-w-7xl',
+  full: 'max-w-none',
+};
+---
+
+<section
+  id={id}
+  aria-label={ariaLabel}
+  class={[
+    sectionPadding[size],
+    backgroundClasses[background],
+    className,
+  ].filter(Boolean).join(' ')}
+>
+  <div class={['mx-auto px-4 sm:px-6 lg:px-8', containerClasses[container]].join(' ')}>
+    <slot />
+  </div>
+</section>

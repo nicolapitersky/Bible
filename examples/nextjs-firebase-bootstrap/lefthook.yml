@@ -1,0 +1,34 @@
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      run: pnpm type-check
+    lint:
+      glob: "*.{ts,tsx}"
+      run: pnpm eslint {staged_files} --max-warnings=0
+    format:
+      glob: "*.{ts,tsx,json,css,md}"
+      run: pnpm prettier --check {staged_files}
+    tokens:
+      glob: "design-tokens/tokens.json"
+      run: node scripts/generate-tokens.js
+    env-manifest:
+      run: node scripts/verify-env.js local
+
+commit-msg:
+  commands:
+    format:
+      run: |
+        MSG=$(cat {1})
+        PATTERN="^(feat|fix|style|refactor|test|docs|chore|security|perf)(\(.+\))?: .{1,100}$"
+        if ! echo "$MSG" | grep -qE "$PATTERN"; then
+          echo "❌ Invalid commit message. Expected: type(scope): description"
+          exit 1
+        fi
+
+pre-push:
+  commands:
+    tests:
+      run: pnpm test:unit --passWithNoTests
+    build:
+      run: pnpm build

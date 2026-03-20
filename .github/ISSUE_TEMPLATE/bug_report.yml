@@ -1,0 +1,78 @@
+name: Bug report
+description: Something is broken
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing a bug: check if it's in `docs/TECH_DEBT.md` already.
+        If so, comment on the existing item rather than creating a new one.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to...
+        2. Click...
+        3. See error
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Production
+        - Staging
+        - Local
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Desktop — Chrome
+        - Desktop — Safari
+        - Desktop — Firefox
+        - Mobile — iOS Safari
+        - Mobile — Android Chrome
+        - iOS App
+        - Android App
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - "Critical — data loss, security issue, payment broken"
+        - "High — core feature broken"
+        - "Medium — feature degraded, workaround exists"
+        - "Low — minor issue, cosmetic"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, console errors, network requests, error messages.

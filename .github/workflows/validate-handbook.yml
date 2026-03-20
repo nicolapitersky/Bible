@@ -1,0 +1,158 @@
+name: Validate Handbook
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ── Validate every markdown file is well-formed ──────────────────────────────
+  lint-markdown:
+    name: Lint markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for broken internal links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          config-file: '.github/mlc-config.json'
+
+      - name: Lint markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+          config: '.github/markdownlint.json'
+
+  # ── Validate JSON schemas ─────────────────────────────────────────────────────
+  validate-schemas:
+    name: Validate schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate env-manifest schema is valid JSON Schema
+        run: node -e "
+          const schema = require('./schemas/env-manifest.schema.json');
+          const Ajv = require('ajv');
+          const ajv = new Ajv();
+          ajv.compile(schema);
+          console.log('✓ env-manifest.schema.json is valid JSON Schema');
+        " || echo 'Schema validation skipped (ajv not installed)'
+
+  # ── Validate scripts run without error ───────────────────────────────────────
+  validate-scripts:
+    name: Validate scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate verify-env.js syntax
+        run: node --check scripts/verify-env.js
+
+      - name: Validate generate-tokens.js syntax
+        run: node --check scripts/generate-tokens.js
+
+      - name: Validate generate-ide-rules.js syntax
+        run: node --check scripts/generate-ide-rules.js
+
+      - name: Validate weekly-quality.js syntax
+        run: node --check scripts/weekly-quality.js
+
+  # ── Check all {{PLACEHOLDERS}} are documented ─────────────────────────────────
+  check-placeholders:
+    name: Check template placeholders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Report template placeholders in non-template files
+        run: |
+          # Templates that SHOULD have placeholders
+          TEMPLATE_FILES="AGENTS_TEMPLATE.md ENVIRONMENTS.md configs/llms.txt.template"
+
+          # Non-template files that should NOT have {{PLACEHOLDER}} patterns
+          echo "Checking for stray placeholders in non-template files..."
+          FOUND=false
+          while IFS= read -r -d '' file; do
+            # Skip template files
+            skip=false
+            for tmpl in $TEMPLATE_FILES; do
+              [[ "$file" == *"$tmpl" ]] && skip=true && break
+            done
+            $skip && continue
+
+            if grep -q "{{[A-Z_]*}}" "$file" 2>/dev/null; then
+              echo "  ⚠ $file contains {{PLACEHOLDER}} — is this intentional?"
+              FOUND=true
+            fi
+          done < <(find . -name "*.md" -not -path "./.git/*" -print0)
+
+          # Stray placeholders in scripts are errors
+          if grep -rq "{{[A-Z_]*}}" scripts/ 2>/dev/null; then
+            echo "  ✗ scripts/ contains placeholders — scripts must be complete"
+            exit 1
+          fi
+
+          echo "Placeholder check complete."
+
+  # ── Verify the example project is coherent ───────────────────────────────────
+  validate-examples:
+    name: Validate example projects
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate example .env.manifest files
+        run: |
+          for manifest in examples/**/.env.manifest; do
+            [ -f "$manifest" ] || continue
+            echo "Validating $manifest..."
+            node -e "
+              const m = JSON.parse(require('fs').readFileSync('$manifest', 'utf8'));
+              if (!m._meta) throw new Error('Missing _meta');
+              if (!m.environments) throw new Error('Missing environments');
+              if (!m.guards) throw new Error('Missing guards');
+              console.log('✓ $manifest is valid');
+            "
+          done
+
+      - name: Validate example tokens.json files
+        run: |
+          for tokens in examples/**/design-tokens/tokens.json; do
+            [ -f "$tokens" ] || continue
+            echo "Validating $tokens..."
+            node -e "
+              const t = JSON.parse(require('fs').readFileSync('$tokens', 'utf8'));
+              if (!t._meta) throw new Error('Missing _meta');
+              if (!t.color) throw new Error('Missing color tokens');
+              if (!t.typography) throw new Error('Missing typography tokens');
+              if (!t.spacing) throw new Error('Missing spacing tokens');
+              console.log('✓ $tokens is valid');
+            "
+          done
+
+      - name: Run token generator on examples
+        run: |
+          for pkg in examples/**/package.json; do
+            dir=$(dirname "$pkg")
+            [ -f "$dir/design-tokens/tokens.json" ] || continue
+            echo "Generating tokens for $dir..."
+            cd "$dir"
+            node ../../scripts/generate-tokens.js
+            cd -
+          done

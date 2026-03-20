@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/YOUR-ORG/dev-handbook/blob/main/schemas/env-manifest.schema.json",
+  "title": "Environment Manifest",
+  "description": "The authoritative source of environment resource identifiers for a project. Contains NO secrets.",
+  "type": "object",
+  "required": ["_meta", "environments", "guards"],
+  "additionalProperties": false,
+  "properties": {
+    "_meta": {
+      "type": "object",
+      "required": ["project_name", "project_slug", "handbook_version", "bootstrapped_at", "manifest_version"],
+      "properties": {
+        "project_name": {
+          "type": "string",
+          "description": "Human-readable project name",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "project_slug": {
+          "type": "string",
+          "description": "URL-safe project identifier",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "handbook_version": {
+          "type": "string",
+          "description": "Version of the Development Handbook used to bootstrap this project",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "bootstrapped_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the project was bootstrapped"
+        },
+        "manifest_version": {
+          "type": "string",
+          "description": "Version of this manifest schema",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "schema": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "environments": {
+      "type": "object",
+      "description": "Environment-specific resource identifiers",
+      "minProperties": 1,
+      "propertyNames": {
+        "enum": ["local", "development", "staging", "production"]
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/environment"
+      }
+    },
+    "guards": {
+      "type": "object",
+      "description": "Safety guards and restrictions",
+      "properties": {
+        "productionRequiresExplicitConfirmation": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, production deployments require CONFIRM_PRODUCTION_DEPLOY env var"
+        },
+        "stagingAllowedBranches": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Git branches allowed to deploy to staging"
+        },
+        "productionAllowedBranches": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Git branches allowed to deploy to production"
+        },
+        "disallowedPatterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Patterns that should never appear hardcoded in source files"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "environment": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human-readable environment label"
+        },
+        "firebase": {
+          "type": ["object", "null"],
+          "properties": {
+            "projectId": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$",
+              "description": "Firebase project ID (not the display name)"
+            },
+            "appId": {
+              "type": "string",
+              "pattern": "^1:[0-9]+:web:[a-f0-9]+$",
+              "description": "Firebase Web App ID"
+            },
+            "storageBucket": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+\\.appspot\\.com$",
+              "description": "Firebase Storage bucket"
+            },
+            "databaseId": {
+              "type": "string",
+              "default": "(default)"
+            },
+            "region": {
+              "type": "string",
+              "description": "Firebase Functions region",
+              "default": "europe-west2"
+            }
+          },
+          "required": ["projectId"]
+        },
+        "vercel": {
+          "type": ["object", "null"],
+          "properties": {
+            "teamSlug": {
+              "type": "string",
+              "description": "Vercel team slug"
+            },
+            "projectId": {
+              "type": "string",
+              "pattern": "^prj_[a-zA-Z0-9]+$",
+              "description": "Vercel project ID (starts with prj_)"
+            },
+            "deploymentUrl": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["teamSlug", "projectId"]
+        },
+        "netlify": {
+          "type": ["object", "null"],
+          "properties": {
+            "siteId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Netlify site ID (UUID format)"
+            },
+            "teamSlug": {
+              "type": "string"
+            }
+          },
+          "required": ["siteId"]
+        },
+        "supabase": {
+          "type": ["object", "null"],
+          "properties": {
+            "projectRef": {
+              "type": "string",
+              "pattern": "^[a-z]{20}$",
+              "description": "Supabase project reference (20 lowercase letters)"
+            },
+            "region": {
+              "type": "string",
+              "description": "Supabase region (e.g., eu-west-2)"
+            }
+          },
+          "required": ["projectRef"]
+        },
+        "stripe": {
+          "type": ["object", "null"],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["live", "test"],
+              "description": "CRITICAL: must be 'test' for non-production environments"
+            },
+            "webhookEndpoint": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["mode"]
+        },
+        "cloudRun": {
+          "type": ["object", "null"],
+          "properties": {
+            "projectId": {
+              "type": "string",
+              "description": "Google Cloud project ID"
+            },
+            "region": {
+              "type": "string",
+              "description": "Cloud Run region",
+              "default": "europe-west2"
+            },
+            "services": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          },
+          "required": ["projectId"]
+        }
+      }
+    }
+  }
+}

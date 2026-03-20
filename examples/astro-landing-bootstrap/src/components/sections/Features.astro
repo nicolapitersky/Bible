@@ -1,0 +1,85 @@
+---
+/**
+ * Features.astro — Feature highlights section
+ * Three columns on desktop, stacked on mobile. Token-based only.
+ */
+import Section from '../ui/Section.astro';
+
+const features = [
+  {
+    icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
+    title: 'Tasks that think ahead',
+    description: 'Subtasks, dependencies, priorities, and due dates — with AI suggestions that learn how your team works.',
+  },
+  {
+    icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+    title: 'Docs beside the work',
+    description: 'Write specs, runbooks, and decisions right next to the tasks they inform. No more context-switching to Notion.',
+  },
+  {
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+    title: 'Integrations that actually work',
+    description: 'GitHub, Slack, Figma, and Linear all sync bidirectionally. Your tools stay in sync without manual updates.',
+  },
+  {
+    icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+    title: 'Visibility without meetings',
+    description: 'Sprint boards, roadmaps, and status rollups give leadership and ICs the same clear picture.',
+  },
+  {
+    icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z',
+    title: 'Security-first by design',
+    description: 'SOC 2 Type II certified. SSO, SCIM provisioning, audit logs, and granular permissions included on all plans.',
+  },
+  {
+    icon: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
+    title: 'Works where your team does',
+    description: 'Desktop apps for Mac and Windows. Native iOS and Android. Full offline support.',
+  },
+];
+---
+
+<Section background="alt" size="lg" aria-label="Features">
+  <div class="text-center mb-16">
+    <h2 class="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
+      Everything your team needs.<br />
+      <span class="text-text-secondary font-medium">Nothing it doesn't.</span>
+    </h2>
+    <p class="mt-4 text-lg text-text-secondary max-w-2xl mx-auto">
+      We obsessed over the tools you actually use every day.
+      The result is a workspace that feels fast and frictionless.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {features.map(({ icon, title, description }) => (
+      <div class="bg-surface-1 rounded-xl border border-border p-6 shadow-sm
+                  hover:shadow-md transition-shadow duration-normal">
+        <div
+          class="w-10 h-10 rounded-lg bg-brand-accent-subtle flex items-center
+                 justify-center mb-4"
+          aria-hidden="true"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--color-brand-accent)"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d={icon} />
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold text-text-primary mb-2">
+          {title}
+        </h3>
+        <p class="text-sm text-text-secondary leading-relaxed">
+          {description}
+        </p>
+      </div>
+    ))}
+  </div>
+</Section>

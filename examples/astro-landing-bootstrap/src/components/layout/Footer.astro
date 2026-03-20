@@ -1,0 +1,49 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer
+  class="bg-surface-background-alt border-t border-border"
+  role="contentinfo"
+  aria-label="Site footer"
+>
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+    <div class="space-y-4 text-sm text-text-secondary leading-relaxed">
+      <p>
+        Bible is an open public development handbook maintained by <strong>Igor Osipov</strong>.
+      </p>
+      <p>
+        Canonical source: <a href="https://github.com/nicolapitersky/Bible" class="text-text-primary hover:text-text-secondary transition duration-fast">GitHub</a><br />
+        Public mirror: <a href="https://www.osipov.uk/Bible" class="text-text-primary hover:text-text-secondary transition duration-fast">www.osipov.uk/Bible</a>
+      </p>
+      <p>
+        Free to use and reuse under the <a href="https://github.com/nicolapitersky/Bible/blob/main/LICENSE" class="text-text-primary hover:text-text-secondary transition duration-fast">MIT License</a>.
+      </p>
+      <p>
+        If you build on Bible, please reference the original project where appropriate.<br />
+        Forks, derivatives, and services must not imply official status or endorsement without permission.
+      </p>
+      <p class="text-xs text-text-tertiary">
+        Contact: <a href="mailto:support@osipov.uk" class="text-text-primary hover:text-text-secondary transition duration-fast">support@osipov.uk</a> ·
+        <a href="https://www.osipov.uk" class="text-text-primary hover:text-text-secondary transition duration-fast">osipov.uk</a> ·
+        <a href="https://www.linkedin.com/in/igorosipov/" class="text-text-primary hover:text-text-secondary transition duration-fast">LinkedIn</a>
+      </p>
+    </div>
+
+    <div class="border-t border-border pt-6 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center text-xs text-text-tertiary">
+      <p>&copy; {year} Igor Osipov. All rights reserved.</p>
+      <p>
+        Built with
+        <a
+          href="https://astro.build"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text-primary hover:text-text-secondary transition duration-fast"
+        >
+          Astro
+        </a>
+        &mdash; Lighthouse score 100.
+      </p>
+    </div>
+  </div>
+</footer>

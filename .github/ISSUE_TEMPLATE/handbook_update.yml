@@ -1,0 +1,56 @@
+name: Handbook update / new stack
+description: Propose an update to the handbook or request a new stack addendum
+labels: ["handbook-update"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of change
+      options:
+        - Tool registry update (TOOLING.md)
+        - Security update (SECURITY.md)
+        - SEO/AEO update (SEO_AEO.md)
+        - New stack addendum (stacks/)
+        - Principle change (PRINCIPLES.md)
+        - Bug in existing content
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What should change?
+      description: Be specific. Quote the current text if proposing a correction.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why should it change?
+      description: Link to evidence — release notes, CVEs, new standards, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      options:
+        - Critical — security issue or actively breaking projects
+        - High — causes real problems, needs fixing this week
+        - Medium — should be done this month
+        - Low — nice to have, no rush
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have checked that this is not already covered in the handbook
+          required: true
+        - label: This is a factual change, not a style preference
+          required: true

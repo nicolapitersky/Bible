@@ -1,0 +1,238 @@
+# Copy to: .github/workflows/ci.yml
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main, staging]
+  push:
+    branches: [main, staging]
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION_FILE: .nvmrc
+  PNPM_VERSION: 9
+
+# ─── Jobs ──────────────────────────────────────────────────────────────────
+
+jobs:
+  # ── 1. Verify environment manifest ────────────────────────────────────────
+  verify-manifest:
+    name: Verify environment manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Verify manifest exists and is valid JSON
+        run: |
+          if [ ! -f ".env.manifest" ]; then
+            echo "::error::.env.manifest not found in project root"
+            echo "Run the Handbook Bootstrap to generate it."
+            exit 1
+          fi
+          node -e "JSON.parse(require('fs').readFileSync('.env.manifest', 'utf8'))"
+          echo "✓ .env.manifest is valid JSON"
+      
+      - name: Check for hardcoded secrets patterns
+        run: |
+          # Check for common secret patterns (not actual values, just patterns)
+          PATTERNS=(
+            "sk_live_[a-zA-Z0-9]{24}"
+            "sk_test_[a-zA-Z0-9]{24}"
+            "AIzaSy[a-zA-Z0-9-_]{33}"
+            "PRIVATE KEY"
+          )
+          FOUND=false
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -r --include="*.ts" --include="*.tsx" --include="*.js" \
+               --include="*.dart" -l -E "$pattern" src/ lib/ 2>/dev/null | grep -q .; then
+              echo "::error::Possible secret pattern found matching: $pattern"
+              FOUND=true
+            fi
+          done
+          if $FOUND; then exit 1; fi
+          echo "✓ No secret patterns found in source"
+
+  # ── 2. Code quality ────────────────────────────────────────────────────────
+  quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+    needs: verify-manifest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: TypeScript — type check
+        run: pnpm type-check
+      
+      - name: ESLint — lint
+        run: pnpm lint --max-warnings=0
+      
+      - name: Prettier — format check
+        run: pnpm format:check
+      
+      - name: Knip — dead code check
+        run: pnpm knip --no-exit-code
+        continue-on-error: true  # Warn, don't fail, on dead code
+      
+      - name: Security — dependency audit
+        run: pnpm audit --audit-level=high
+
+  # ── 3. Tests ───────────────────────────────────────────────────────────────
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Unit tests with coverage
+        run: pnpm test:unit --coverage --reporter=verbose
+        env:
+          NODE_ENV: test
+          CI: true
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+      
+      - name: Coverage threshold check
+        run: |
+          # Fail if coverage drops below 70%
+          # Adjust threshold as the project matures
+          pnpm test:unit --coverage --coverageThreshold='{"global":{"lines":70,"functions":70,"branches":70}}'
+
+  # ── 4. E2E tests (on PRs to main only) ────────────────────────────────────
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Install Playwright browsers
+        run: pnpm playwright install --with-deps chromium
+      
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          NODE_ENV: test
+          CI: true
+          # Use test/staging environment — NEVER production
+          NEXT_PUBLIC_ENV: test
+      
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  # ── 5. Build ───────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+          # Public env vars for build — no secrets
+          NEXT_PUBLIC_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+      
+      - name: Bundle size check
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_step: install
+        continue-on-error: true
+
+  # ── 6. Lighthouse CI ───────────────────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

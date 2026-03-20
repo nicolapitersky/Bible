@@ -1,0 +1,172 @@
+/* design-tokens/tokens.css
+ * AUTO-GENERATED — do not edit.
+ * Source: design-tokens/tokens.json
+ * Generated: 2026-03-19T20:48:43.691Z
+ * Edit tokens.json and re-run: node scripts/generate-tokens.js
+ *
+ * Usage: import once in your root layout.
+ * CSS:   color: var(--color-brand-primary);
+ */
+
+:root {
+  /* Near-black — bold, confident brand */
+  --color-brand-primary: #0A0A0A;
+  --color-brand-primary-hover: #262626;
+  --color-brand-primary-subtle: #F5F5F5;
+  /* Indigo accent for CTAs and highlights */
+  --color-brand-accent: #6366F1;
+  --color-brand-accent-hover: #4F46E5;
+  --color-brand-accent-subtle: #EEF2FF;
+  --color-semantic-success: #10B981;
+  --color-semantic-success-subtle: #D1FAE5;
+  --color-semantic-warning: #F59E0B;
+  --color-semantic-warning-subtle: #FEF3C7;
+  --color-semantic-error: #EF4444;
+  --color-semantic-error-subtle: #FEE2E2;
+  --color-surface-background: #FFFFFF;
+  --color-surface-background-alt: #FAFAFA;
+  --color-surface-surface-1: #FFFFFF;
+  --color-surface-surface-2: #F5F5F5;
+  --color-surface-surface-3: #E5E5E5;
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #A3A3A3;
+  --color-text-inverse: #FFFFFF;
+  --color-text-on-accent: #FFFFFF;
+  --color-text-link: #6366F1;
+  --color-text-link-hover: #4F46E5;
+  --color-border-default: #E5E5E5;
+  --color-border-strong: #D4D4D4;
+  --color-border-focus: #6366F1;
+  --typography-font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --typography-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  /* Labels, captions */
+  --typography-font-size-xs: 0.75rem;
+  /* Secondary text */
+  --typography-font-size-sm: 0.875rem;
+  /* Body (default) */
+  --typography-font-size-base: 1rem;
+  /* Lead text */
+  --typography-font-size-lg: 1.125rem;
+  /* Small headings */
+  --typography-font-size-xl: 1.25rem;
+  /* Section headings */
+  --typography-font-size-2xl: 1.5rem;
+  /* Page headings */
+  --typography-font-size-3xl: 1.875rem;
+  /* Hero (mobile) */
+  --typography-font-size-4xl: 2.25rem;
+  /* Hero (desktop) */
+  --typography-font-size-5xl: 3rem;
+  /* Display (desktop) */
+  --typography-font-size-6xl: 3.75rem;
+  --typography-font-weight-regular: 400;
+  --typography-font-weight-medium: 500;
+  --typography-font-weight-semibold: 600;
+  --typography-font-weight-bold: 700;
+  /* Large headings */
+  --typography-line-height-tight: 1.1;
+  /* Headings */
+  --typography-line-height-snug: 1.25;
+  /* Body */
+  --typography-line-height-normal: 1.5;
+  /* Long-form reading */
+  --typography-line-height-relaxed: 1.7;
+  /* Large display headings */
+  --typography-letter-spacing-tighter: -0.04em;
+  /* Headings */
+  --typography-letter-spacing-tight: -0.02em;
+  --typography-letter-spacing-normal: 0;
+  /* Uppercase labels */
+  --typography-letter-spacing-wide: 0.05em;
+  /* All-caps tracking */
+  --typography-letter-spacing-wider: 0.1em;
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  /* Base unit */
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  --border-radius-none: 0;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-2xl: 24px;
+  --border-radius-3xl: 32px;
+  /* Pills, avatars */
+  --border-radius-full: 9999px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.07), 0 4px 6px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.08), 0 8px 10px rgba(0,0,0,0.04);
+  --shadow-2xl: 0 25px 50px rgba(0,0,0,0.12);
+  --animation-duration-instant: 0ms;
+  /* Hover, micro-interactions */
+  --animation-duration-fast: 150ms;
+  /* Standard transitions */
+  --animation-duration-normal: 250ms;
+  /* Page transitions, modals */
+  --animation-duration-slow: 350ms;
+  /* Complex sequences */
+  --animation-duration-slower: 500ms;
+  --animation-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --animation-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --animation-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --z-index-base: 0;
+  --z-index-raised: 1;
+  --z-index-dropdown: 100;
+  --z-index-sticky: 200;
+  --z-index-overlay: 300;
+  --z-index-modal: 400;
+  --z-index-toast: 500;
+  --z-index-tooltip: 600;
+}
+
+[data-theme="dark"] {
+  --color-surface-background: #0A0A0A;
+  --color-surface-background-alt: #111111;
+  --color-surface-surface-1: #171717;
+  --color-surface-surface-2: #262626;
+  --color-surface-surface-3: #404040;
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A3A3A3;
+  --color-text-tertiary: #525252;
+  --color-border-default: #262626;
+  --color-border-strong: #404040;
+}
+
+/* Responsive — smaller display type on mobile */
+@media (max-width: 640px) {
+  :root {
+    --typography-font-size-4xl: 1.75rem; /* 36px → 28px */
+    --typography-font-size-5xl: 2.3125rem; /* 48px → 37px */
+    --typography-font-size-6xl: 2.9375rem; /* 60px → 47px */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration-instant: 0ms;
+    --animation-duration-fast: 0ms;
+    --animation-duration-normal: 0ms;
+    --animation-duration-slow: 0ms;
+    --animation-duration-slower: 0ms;
+  }
+}

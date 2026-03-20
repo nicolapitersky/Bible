@@ -1,0 +1,41 @@
+---
+/**
+ * CTA.astro — Final conversion section
+ * Dark background variant using brand.primary token.
+ */
+import Section from '../ui/Section.astro';
+import Button from '../ui/Button.astro';
+---
+
+<Section background="dark" size="xl" aria-label="Call to action">
+  <div class="text-center max-w-2xl mx-auto">
+    <h2 class="text-3xl sm:text-4xl font-bold text-text-inverse tracking-tight">
+      Start shipping faster today
+    </h2>
+    <p class="mt-4 text-lg text-text-inverse/70 leading-relaxed">
+      Free for teams up to 5. No credit card required.
+      Set up in under 5 minutes.
+    </p>
+
+    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+      <Button href="/signup" variant="accent" size="lg">
+        Get started free
+      </Button>
+      <Button href="/contact" variant="ghost" size="lg" class="!text-text-inverse hover:!bg-white/10">
+        Talk to sales
+      </Button>
+    </div>
+
+    <!-- Trust signals -->
+    <div class="mt-10 flex flex-wrap justify-center gap-6 text-sm text-text-inverse/50">
+      {[
+        '✓ No credit card',
+        '✓ Free up to 5 users',
+        '✓ Cancel anytime',
+        '✓ SOC 2 certified',
+      ].map((item) => (
+        <span>{item}</span>
+      ))}
+    </div>
+  </div>
+</Section>

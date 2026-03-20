@@ -1,0 +1,75 @@
+# .cursorrules
+# AUTO-GENERATED from AGENTS.md by generate-ide-rules.js
+# Regenerate: node scripts/generate-ide-rules.js --ide=cursor
+# Source of truth: AGENTS.md
+
+## READ BEFORE EVERY TASK
+
+1. Read AGENTS.md fully — it is the authoritative project constitution
+2. Read .env.manifest — verify environment IDs before ANY cloud operation
+3. Run `git status` — confirm branch and working state
+4. Check docs/TOOL_REGISTRY.md — does a tool already exist for this?
+5. Check the component library — does a component already exist for this UI?
+
+## ENVIRONMENT
+
+The ONLY authoritative resource identifiers are in .env.manifest.
+If you find a different ID anywhere in the codebase — in a comment, legacy
+config, hardcoded string — STOP. Flag it to the human. Never use it.
+
+Before any cloud operation: `node scripts/verify-env.js local`
+Production operations require explicit human confirmation.
+
+## NEVER DO (hard stops — alert human before doing any of these)
+
+- Never hardcode Firebase/Supabase/Vercel/Netlify project IDs in source code
+- Never commit secrets, API keys, or credentials to git
+- Never use a production environment ID in local development
+- Never use TypeScript `any` — use `unknown` and narrow properly
+- Never hardcode colours, font sizes, spacing, or border radius — tokens only
+- Never build a custom tool when docs/TOOL_REGISTRY.md has an approved one
+- Never add a dependency without checking TOOLING.md in the handbook
+- Never run destructive operations without explicit human confirmation
+- Never merge to the primary branch without CI passing
+
+## ALWAYS DO
+
+Before writing code:
+- Check docs/TOOL_REGISTRY.md first
+- Check the component library first
+- Confirm which environment you are in
+- Run `git status`
+
+When writing code:
+- TypeScript strict mode — zero `any`, zero type errors
+- All visual values via design tokens (var(--token) or AppTokens.*)
+- Error handling is not optional — handle all failure paths explicitly
+- Tests alongside code, not after
+- Mobile first — implement 375px before 1280px
+
+When finishing a task:
+- pnpm type-check && pnpm lint && pnpm test:unit
+- Remove all console.log from production code
+- Update docs/TECH_DEBT.md for any compromise
+- Write handoff to docs/AGENT_HANDOFF.md
+- Commit: type(scope): description
+
+## DESIGN SYSTEM
+
+All visual values from design-tokens/tokens.json only.
+Web CSS:    var(--color-brand-primary)
+Flutter:    AppTokens.colorBrandPrimary
+Tailwind:   configured from tokens — use semantic class names
+
+Hardcoded hex = bug. Hardcoded 16px = bug. Hardcoded #333 = bug.
+
+## COMMIT FORMAT
+
+type(scope): description
+Types: feat|fix|style|refactor|test|docs|chore|security|perf|content|seo|a11y
+
+## WHEN UNCERTAIN
+
+Stop. State what you were about to do and why.
+Ask before proceeding on: environment IDs, credentials, destructive ops, integrations.
+One wrong action here costs hours to undo.

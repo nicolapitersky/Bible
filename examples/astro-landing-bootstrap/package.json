@@ -1,0 +1,51 @@
+{
+  "name": "acme-landing",
+  "version": "1.0.0",
+  "description": "Acme marketing and brochure site",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "pnpm prebuild && astro build",
+    "prebuild": "node scripts/generate-tokens.js && node scripts/verify-env.js local",
+    "preview": "astro preview",
+    "type-check": "astro check && tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx,.astro --max-warnings=0",
+    "lint:fix": "eslint src --ext .ts,.tsx,.astro --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lighthouse": "lhci autorun",
+    "tokens": "node scripts/generate-tokens.js",
+    "postbuild": "echo 'Build complete. Run: node scripts/verify-env.js production before deploying.'"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "astro-compress": "^2.0.0",
+    "astro-seo": "^0.8.0",
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/typography": "^0.5.0",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^0.34.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "lefthook": "^1.6.0",
+    "prettier": "^3.3.0",
+    "prettier-plugin-astro": "^0.14.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "@lhci/cli": "^0.13.0"
+  }
+}

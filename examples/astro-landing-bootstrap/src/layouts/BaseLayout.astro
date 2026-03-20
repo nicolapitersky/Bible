@@ -1,0 +1,222 @@
+---
+/**
+ * BaseLayout.astro
+ * Root layout for all pages.
+ * Handles: fonts, tokens, SEO, analytics, dark mode, skip nav.
+ *
+ * Usage:
+ *   <BaseLayout title="Page Title" description="Page description.">
+ *     <main>...</main>
+ *   </BaseLayout>
+ */
+import { SEO } from 'astro-seo';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Canonical URL override. Defaults to current page URL. */
+  canonical?: string;
+  /** OG image URL. Defaults to /og-default.jpg */
+  ogImage?: string;
+  /** Page type for OG. Defaults to 'website'. */
+  ogType?: 'website' | 'article';
+  /** JSON-LD structured data. Injected into <head>. */
+  structuredData?: Record<string, unknown>;
+  /** Prevent indexing. Use for staging and draft pages. */
+  noIndex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical = Astro.url.href,
+  ogImage = '/og-default.jpg',
+  ogType = 'website',
+  structuredData,
+  noIndex = false,
+} = Astro.props;
+
+const siteName = 'Acme';
+const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
+const ogImageAbsolute = new URL(ogImage, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Design tokens — must be first style import -->
+    <link rel="stylesheet" href="/tokens.css" />
+
+    <!-- Fonts — self-hosted, no CDN -->
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- SEO -->
+    <SEO
+      title={fullTitle}
+      description={description}
+      canonical={canonical}
+      noindex={noIndex}
+      openGraph={{
+        basic: {
+          title: fullTitle,
+          type: ogType,
+          image: ogImageAbsolute,
+          url: canonical,
+        },
+        optional: {
+          description,
+          siteName,
+          locale: 'en_GB',
+        },
+        image: {
+          alt: `${siteName} — ${title}`,
+          width: 1200,
+          height: 630,
+        },
+      }}
+      twitter={{
+        card: 'summary_large_image',
+        site: '@acme',
+        title: fullTitle,
+        description,
+        image: ogImageAbsolute,
+        imageAlt: `${siteName} — ${title}`,
+      }}
+      extend={{
+        link: [
+          { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+          { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+          { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+          { rel: 'manifest', href: '/site.webmanifest' },
+        ],
+        meta: [
+          { name: 'theme-color', content: '#0A0A0A' },
+          { name: 'color-scheme', content: 'light dark' },
+        ],
+      }}
+    />
+
+    <!-- Structured data -->
+    {structuredData && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(structuredData)}
+      />
+    )}
+
+    <!-- Default organisation structured data on every page -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Acme',
+      url: Astro.site?.toString(),
+      logo: new URL('/logo.png', Astro.site).toString(),
+      sameAs: [
+        'https://twitter.com/acme',
+        'https://linkedin.com/company/acme',
+      ],
+    })} />
+
+    <!-- Dark mode: no flash of wrong theme -->
+    <script is:inline>
+      (function() {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="bg-surface-background text-text-primary font-sans antialiased">
+    <!-- Accessibility: skip to main content -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-tooltip
+             focus:px-4 focus:py-2 focus:bg-brand-accent focus:text-text-on-accent
+             focus:rounded-md focus:text-sm focus:font-medium"
+    >
+      Skip to main content
+    </a>
+
+    <slot />
+
+    <!-- Minimal theme toggle script -->
+    <script is:inline>
+      window.__toggleTheme = function() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      };
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Import design tokens */
+  @import '../../design-tokens/tokens.css';
+
+  /* Self-hosted font */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/inter-var.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Base reset — tokens-aware */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    line-height: var(--typography-line-height-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus visible — uses accent colour from tokens */
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm);
+  }
+
+  /* Remove focus ring for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Images */
+  img, video {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

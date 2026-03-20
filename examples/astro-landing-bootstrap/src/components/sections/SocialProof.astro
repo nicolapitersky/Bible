@@ -1,0 +1,86 @@
+---
+/**
+ * SocialProof.astro — Customer testimonials
+ */
+import Section from '../ui/Section.astro';
+
+const testimonials = [
+  {
+    quote: "We cut our sprint planning time from 2 hours to 20 minutes. The AI suggestions actually understand how we work.",
+    name: "Sarah Chen",
+    role: "Engineering Lead",
+    company: "Polar",
+    initials: "SC",
+    colour: "bg-brand-accent",
+  },
+  {
+    quote: "Finally a tool that doesn't feel like it was designed for a company that no longer exists. Acme ships fast.",
+    name: "Marcus Williams",
+    role: "CTO",
+    company: "Drifter",
+    initials: "MW",
+    colour: "bg-brand-primary",
+  },
+  {
+    quote: "The GitHub integration alone saved us hours a week. PRs auto-close tasks. Deploys update statuses. It just works.",
+    name: "Priya Nair",
+    role: "Staff Engineer",
+    company: "Hatch",
+    initials: "PN",
+    colour: "bg-semantic-success",
+  },
+];
+
+const logos = [
+  "Stripe", "Vercel", "Linear", "Loom", "Cal.com", "Resend"
+];
+---
+
+<Section size="lg" aria-label="Customer testimonials and social proof">
+  <!-- Logo bar -->
+  <div class="text-center mb-16">
+    <p class="text-sm font-medium text-text-tertiary uppercase tracking-wider mb-8">
+      Trusted by teams at
+    </p>
+    <div
+      class="flex flex-wrap justify-center items-center gap-8 sm:gap-12"
+      aria-label="Companies using Acme"
+    >
+      {logos.map((logo) => (
+        <span
+          class="text-text-tertiary font-semibold text-lg tracking-tight
+                 hover:text-text-secondary transition-colors duration-fast"
+        >
+          {logo}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {testimonials.map(({ quote, name, role, company, initials, colour }) => (
+      <figure
+        class="bg-surface-1 rounded-xl border border-border p-6 shadow-sm
+               flex flex-col justify-between"
+      >
+        <blockquote class="text-text-primary leading-relaxed">
+          &ldquo;{quote}&rdquo;
+        </blockquote>
+        <figcaption class="mt-6 flex items-center gap-3">
+          <div
+            class={`w-10 h-10 rounded-full flex items-center justify-center
+                    text-text-inverse text-sm font-bold flex-shrink-0 ${colour}`}
+            aria-hidden="true"
+          >
+            {initials}
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-text-primary">{name}</div>
+            <div class="text-xs text-text-tertiary">{role}, {company}</div>
+          </div>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</Section>

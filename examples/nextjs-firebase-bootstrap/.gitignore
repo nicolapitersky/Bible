@@ -1,0 +1,28 @@
+node_modules/
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# NEVER commit these
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+*.pem
+*.key
+serviceAccountKey.json
+firebase-adminsdk-*.json
+
+# These ARE committed
+# .env.example   ← empty template
+# .env.manifest  ← resource IDs, no secrets
+
+.cache/
+.eslintcache
+*.tsbuildinfo
+.DS_Store
+logs/
+*.log

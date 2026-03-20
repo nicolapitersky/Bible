@@ -1,0 +1,414 @@
+# .github/workflows/ci.yml
+# Complete Development Handbook — CI Pipeline
+# Copy to .github/workflows/ci.yml in your project.
+# Adjust pnpm/test/build commands to match your stack.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main, staging]
+  push:
+    branches: [main, staging]
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION_FILE: .nvmrc
+  PNPM_VERSION: 9
+
+# ─── Jobs ──────────────────────────────────────────────────────────────────
+
+jobs:
+  # ── 1. Verify environment manifest ────────────────────────────────────────
+  verify-manifest:
+    name: Verify environment manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Verify manifest exists and is valid JSON
+        run: |
+          if [ ! -f ".env.manifest" ]; then
+            echo "::error::.env.manifest not found in project root"
+            echo "Run the Handbook Bootstrap to generate it."
+            exit 1
+          fi
+          node -e "JSON.parse(require('fs').readFileSync('.env.manifest', 'utf8'))"
+          echo "✓ .env.manifest is valid JSON"
+      
+      - name: Check for hardcoded secrets patterns
+        run: |
+          # Check for common secret patterns (not actual values, just patterns)
+          PATTERNS=(
+            "sk_live_[a-zA-Z0-9]{24}"
+            "sk_test_[a-zA-Z0-9]{24}"
+            "AIzaSy[a-zA-Z0-9-_]{33}"
+            "PRIVATE KEY"
+          )
+          FOUND=false
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -r --include="*.ts" --include="*.tsx" --include="*.js" \
+               --include="*.dart" -l -E "$pattern" src/ lib/ 2>/dev/null | grep -q .; then
+              echo "::error::Possible secret pattern found matching: $pattern"
+              FOUND=true
+            fi
+          done
+          if $FOUND; then exit 1; fi
+          echo "✓ No secret patterns found in source"
+
+  # ── 2. Code quality ────────────────────────────────────────────────────────
+  quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+    needs: verify-manifest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: TypeScript — type check
+        run: pnpm type-check
+      
+      - name: ESLint — lint
+        run: pnpm lint --max-warnings=0
+      
+      - name: Prettier — format check
+        run: pnpm format:check
+      
+      - name: Knip — dead code check
+        run: pnpm knip --no-exit-code
+        continue-on-error: true  # Warn, don't fail, on dead code
+      
+      - name: Security — dependency audit
+        run: pnpm audit --audit-level=high
+
+  # ── 3. Tests ───────────────────────────────────────────────────────────────
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Unit tests with coverage
+        run: pnpm test:unit --coverage --reporter=verbose
+        env:
+          NODE_ENV: test
+          CI: true
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+      
+      - name: Coverage threshold check
+        run: |
+          # Fail if coverage drops below 70%
+          # Adjust threshold as the project matures
+          pnpm test:unit --coverage --coverageThreshold='{"global":{"lines":70,"functions":70,"branches":70}}'
+
+  # ── 4. E2E tests (on PRs to main only) ────────────────────────────────────
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Install Playwright browsers
+        run: pnpm playwright install --with-deps chromium
+      
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          NODE_ENV: test
+          CI: true
+          # Use test/staging environment — NEVER production
+          NEXT_PUBLIC_ENV: test
+      
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  # ── 5. Build ───────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+          # Public env vars for build — no secrets
+          NEXT_PUBLIC_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+      
+      - name: Bundle size check
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_step: install
+        continue-on-error: true
+
+  # ── 6. Lighthouse CI ───────────────────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.NODE_VERSION_FILE }}
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+---
+# .github/workflows/weekly-quality.yml
+# Complete Development Handbook — Weekly Quality Run
+# Runs every Monday at 06:00 UTC
+
+name: Weekly Quality Run
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Monday 06:00 UTC
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  weekly-quality:
+    name: Weekly quality audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for secret scanning
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Dependency audit
+        id: audit
+        run: |
+          pnpm audit --json > audit-report.json 2>&1 || true
+          VULN_COUNT=$(cat audit-report.json | node -e "
+            const d = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            console.log(d.metadata?.vulnerabilities?.total || 0);
+          ")
+          echo "vulnerabilities=$VULN_COUNT" >> $GITHUB_OUTPUT
+        continue-on-error: true
+      
+      - name: Outdated dependencies
+        id: outdated
+        run: pnpm outdated --json > outdated-report.json 2>&1 || true
+        continue-on-error: true
+      
+      - name: Dead code detection
+        run: pnpm knip --reporter json > knip-report.json 2>&1 || true
+        continue-on-error: true
+      
+      - name: Console.log sweep
+        id: consolelogs
+        run: |
+          COUNT=$(grep -r "console\.log" src/ --include="*.ts" --include="*.tsx" \
+                  --include="*.js" 2>/dev/null | wc -l || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+      
+      - name: TODO/FIXME sweep
+        id: todos
+        run: |
+          COUNT=$(grep -r "TODO\|FIXME\|HACK\|XXX" src/ --include="*.ts" \
+                  --include="*.tsx" --include="*.dart" 2>/dev/null | wc -l || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+      
+      - name: Secret scan (recent commits)
+        run: |
+          if command -v gitleaks &> /dev/null; then
+            gitleaks detect --source=. --log-opts="-n 50" --report-format=json \
+              --report-path=gitleaks-report.json --quiet || true
+          fi
+        continue-on-error: true
+      
+      - name: Create quality report issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            const vulns = '${{ steps.audit.outputs.vulnerabilities }}' || '?';
+            const consoleLogs = '${{ steps.consolelogs.outputs.count }}' || '0';
+            const todos = '${{ steps.todos.outputs.count }}' || '0';
+            
+            const body = `## Weekly Quality Report — ${date}
+            
+            ### Summary
+            
+            | Check | Result | Status |
+            |-------|--------|--------|
+            | Dependency vulnerabilities | ${vulns} total | ${vulns > 0 ? '⚠️' : '✅'} |
+            | Stray console.logs | ${consoleLogs} | ${consoleLogs > 0 ? '⚠️' : '✅'} |
+            | Unlogged TODO/FIXME/HACK | ${todos} | ${todos > 5 ? '⚠️' : '✅'} |
+            
+            ### Action Required
+            
+            Review the full CI run for detailed reports on each check.
+            Update \`docs/TECH_DEBT.md\` with any new items.
+            Address all HIGH and CRITICAL findings before next sprint.
+            
+            ### Checklist
+            - [ ] Review dependency vulnerabilities
+            - [ ] Check outdated packages
+            - [ ] Review dead code report
+            - [ ] Address console.logs in production code
+            - [ ] Ensure all TODOs are in TECH_DEBT.md
+            - [ ] Review and prioritise TECH_DEBT.md
+            - [ ] Check AEO/SEO (llms.txt up to date?)
+            - [ ] Verify performance budgets not regressed
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Weekly Quality Report — ${date}`,
+              body,
+              labels: ['weekly-quality'],
+            });
+
+---
+# .github/workflows/security-scan.yml
+# Runs on every push to main and staging
+
+name: Security Scan
+
+on:
+  push:
+    branches: [main, staging]
+  schedule:
+    - cron: '0 0 * * *'  # Daily midnight scan
+
+jobs:
+  secret-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: TruffleHog — secret scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.before || 'HEAD~1' }}
+          head: HEAD
+          extra_args: --only-verified
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0  # Adjust per your legal requirements
+
+  codeql:
+    name: CodeQL analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3

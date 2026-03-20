@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+.astro/
+
+# Environment — NEVER commit these
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# These ARE committed:
+# .env.example   ← empty template
+# .env.manifest  ← resource IDs, no secrets
+
+# Secrets
+*.pem
+*.key
+
+# Caches
+.cache/
+.eslintcache
+.tsbuildinfo
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+*.zip
