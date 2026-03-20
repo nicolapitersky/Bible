@@ -1,0 +1,36 @@
+name: Main Fence
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  main-fence:
+    name: main-fence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block website paths from main
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_REF="origin/${{ github.base_ref }}"
+          git fetch origin "${{ github.base_ref }}" --depth=1
+
+          CHANGED=$(git diff --name-only "$BASE_REF...HEAD")
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          BLOCKED=$(echo "$CHANGED" | rg "^(index\\.html|404\\.html|docs/|robots\\.txt|sitemap\\.xml|SECURITY\\.txt|\\.well-known/|\\.nojekyll)" || true)
+
+          if [ -n "$BLOCKED" ]; then
+            echo "::error::Website files are not allowed on main. Use gh-pages branch for promo site changes."
+            echo "$BLOCKED"
+            exit 1
+          fi
+
+          echo "Main fence passed."
