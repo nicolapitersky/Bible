@@ -6,56 +6,26 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
     />
-    <title>Documentation | AI Coding Bible</title>
+    <title>Repository Explorer | AI Coding Bible</title>
     <meta
       name="description"
-      content="Browse AI Coding Bible documentation: bootstrap, retrofit, principles, security, quality, tooling, design system, and stack-specific guidance."
+      content="Full file and folder explorer for AI Coding Bible. Auto-updated from the GitHub main branch."
     />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://bible.osipov.uk/docs/" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Documentation | AI Coding Bible" />
-    <meta property="og:description" content="Browse core handbook docs and open each document in a clean reader view." />
+    <meta property="og:title" content="Repository Explorer | AI Coding Bible" />
+    <meta property="og:description" content="Browse all files and folders and open any file in a reader tab." />
     <meta property="og:url" content="https://bible.osipov.uk/docs/" />
     <meta property="og:image" content="https://bible.osipov.uk/preview.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Documentation | AI Coding Bible" />
-    <meta name="twitter:description" content="Browse all documentation pages for AI Coding Bible." />
+    <meta name="twitter:title" content="Repository Explorer | AI Coding Bible" />
+    <meta name="twitter:description" content="Auto-updated full repository file explorer." />
     <meta name="twitter:image" content="https://bible.osipov.uk/preview.png" />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "name": "AI Coding Bible",
-            "url": "https://bible.osipov.uk/"
-          },
-          {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://bible.osipov.uk/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Documentation",
-                "item": "https://bible.osipov.uk/docs/"
-              }
-            ]
-          }
-        ]
-      }
-    </script>
 
     <style>
       body {
@@ -65,7 +35,7 @@
         color: #f4f5f8;
       }
       .container {
-        width: min(1100px, 92vw);
+        width: min(1120px, 92vw);
         margin: 0 auto;
         padding: 2rem 0 3rem;
       }
@@ -77,45 +47,119 @@
       }
       h1 {
         margin: 0.6rem 0;
+        font-size: clamp(1.7rem, 2.7vw, 2.2rem);
       }
       p {
         color: #b1b5c3;
       }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.8rem;
+      .toolbar {
         margin-top: 1rem;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.7rem;
       }
-      .card {
+      .search {
+        width: 100%;
         border: 1px solid #373747;
+        background: rgba(255, 255, 255, 0.02);
+        color: #f4f5f8;
+        border-radius: 10px;
+        padding: 0.74rem 0.86rem;
+        font-size: 0.95rem;
+      }
+      .count {
+        color: #b1b5c3;
+        align-self: center;
+        font-size: 0.9rem;
+      }
+      .explorer {
+        margin-top: 0.9rem;
         background: #24242f;
-        border-radius: 12px;
-        padding: 1rem;
+        border: 1px solid #373747;
+        border-radius: 14px;
+        padding: 0.85rem;
       }
-      .card h2 {
+      .tree-root {
+        list-style: none;
         margin: 0;
-        font-size: 1rem;
+        padding: 0;
       }
-      .card p {
-        margin: 0.5rem 0 0.9rem;
-        font-size: 0.92rem;
+      .tree-children {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 0 1rem;
+        border-left: 1px dashed #454559;
+      }
+      .folder {
+        margin: 0.25rem 0;
+      }
+      .folder > summary {
+        list-style: none;
+        cursor: pointer;
+        color: #f4f5f8;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.18rem 0.12rem;
+        border-radius: 7px;
+      }
+      .folder > summary::-webkit-details-marker {
+        display: none;
+      }
+      .folder > summary:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .folder > summary::before {
+        content: "▸";
+        color: #cab590;
+        font-size: 0.7rem;
+        transform: translateY(-1px);
+      }
+      .folder[open] > summary::before {
+        content: "▾";
+      }
+      .file-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.19rem 0.12rem;
+        border-radius: 7px;
+        margin: 0.12rem 0;
+      }
+      .file-row:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .file-link {
+        text-decoration: none;
+        color: #dce0eb;
+      }
+      .file-link:hover,
+      .file-link:focus-visible {
+        color: #cab590;
+      }
+      .muted {
+        color: #b1b5c3;
+      }
+      .icon-folder {
+        color: #e1bf81;
+      }
+      .icon-file {
+        color: #7ec7a0;
+      }
+      .actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
       }
       .btn {
         text-decoration: none;
-        display: inline-block;
         border: 1px solid #5e5442;
         border-radius: 8px;
         padding: 0.45rem 0.7rem;
         color: #cab590;
       }
-      @media (max-width: 900px) {
-        .grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-      @media (max-width: 620px) {
-        .grid {
+      @media (max-width: 720px) {
+        .toolbar {
           grid-template-columns: 1fr;
         }
       }
@@ -123,22 +167,186 @@
   </head>
   <body>
     <main class="container">
-      <nav class="crumbs"><a href="../">Home</a> / Documentation</nav>
-      <h1>Documentation</h1>
-      <p>Open any handbook file in the reader view, or jump directly to GitHub for markdown-native rendering.</p>
+      <nav class="crumbs"><a href="../">Home</a> / Repository Explorer</nav>
+      <h1>Full Repository Explorer</h1>
+      <p>
+        Auto-updated folder and file view from `main`. If you add or change files in the repository, this list updates
+        automatically on next load.
+      </p>
+      <div class="actions">
+        <a class="btn" href="https://github.com/nicolapitersky/Bible" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+      </div>
 
-      <section class="grid">
-        <article class="card"><h2>BOOTSTRAP.md</h2><p>New project bootstrap workflow.</p><a class="btn" href="./viewer.html?doc=BOOTSTRAP.md">Read</a></article>
-        <article class="card"><h2>RETROFIT.md</h2><p>Existing project retrofit process.</p><a class="btn" href="./viewer.html?doc=RETROFIT.md">Read</a></article>
-        <article class="card"><h2>PRINCIPLES.md</h2><p>Non-negotiable engineering principles.</p><a class="btn" href="./viewer.html?doc=PRINCIPLES.md">Read</a></article>
-        <article class="card"><h2>DESIGN_SYSTEM.md</h2><p>Design tokens and UI governance.</p><a class="btn" href="./viewer.html?doc=DESIGN_SYSTEM.md">Read</a></article>
-        <article class="card"><h2>ENVIRONMENTS.md</h2><p>Environment and cloud write-safety controls.</p><a class="btn" href="./viewer.html?doc=ENVIRONMENTS.md">Read</a></article>
-        <article class="card"><h2>SECURITY.md</h2><p>Security baseline and controls.</p><a class="btn" href="./viewer.html?doc=SECURITY.md">Read</a></article>
-        <article class="card"><h2>TOOLING.md</h2><p>Approved tools and build-vs-buy guidance.</p><a class="btn" href="./viewer.html?doc=TOOLING.md">Read</a></article>
-        <article class="card"><h2>QUALITY.md</h2><p>CI/CD and recurring quality loop.</p><a class="btn" href="./viewer.html?doc=QUALITY.md">Read</a></article>
-        <article class="card"><h2>STRUCTURE.md</h2><p>Canonical folder structures by stack.</p><a class="btn" href="./viewer.html?doc=STRUCTURE.md">Read</a></article>
-        <article class="card"><h2>MULTI_AGENT.md</h2><p>Multi-agent handoff protocol.</p><a class="btn" href="./viewer.html?doc=MULTI_AGENT.md">Read</a></article>
+      <div class="toolbar">
+        <label for="fileSearch" style="position: absolute; left: -9999px">Search files</label>
+        <input
+          id="fileSearch"
+          class="search"
+          type="search"
+          placeholder="Search by path or filename"
+          autocomplete="off"
+        />
+        <div id="fileCount" class="count">Loading files...</div>
+      </div>
+
+      <section class="explorer">
+        <div id="explorerStatus" class="muted">Fetching repository tree...</div>
+        <div id="explorerTree" aria-live="polite"></div>
       </section>
     </main>
+
+    <script>
+      (function () {
+        var OWNER = "nicolapitersky";
+        var REPO = "Bible";
+        var BRANCH = "main";
+
+        var searchInput = document.getElementById("fileSearch");
+        var fileCount = document.getElementById("fileCount");
+        var explorerStatus = document.getElementById("explorerStatus");
+        var explorerTree = document.getElementById("explorerTree");
+
+        var allFiles = [];
+
+        function sortEntries(a, b) {
+          if (a.type !== b.type) return a.type === "tree" ? -1 : 1;
+          return a.name.localeCompare(b.name);
+        }
+
+        function buildTree(paths) {
+          var root = { name: "", type: "tree", children: {} };
+          paths.forEach(function (path) {
+            var parts = path.split("/");
+            var node = root;
+            for (var i = 0; i < parts.length; i += 1) {
+              var part = parts[i];
+              var isFile = i === parts.length - 1;
+              if (!node.children[part]) {
+                node.children[part] = {
+                  name: part,
+                  type: isFile ? "blob" : "tree",
+                  path: parts.slice(0, i + 1).join("/"),
+                  children: isFile ? null : {}
+                };
+              }
+              node = node.children[part];
+            }
+          });
+          return root;
+        }
+
+        function renderNode(node, depth) {
+          var wrapper = document.createElement("ul");
+          wrapper.className = depth === 0 ? "tree-root" : "tree-children";
+
+          var entries = Object.keys(node.children || {})
+            .map(function (key) {
+              return node.children[key];
+            })
+            .sort(sortEntries);
+
+          entries.forEach(function (entry) {
+            var li = document.createElement("li");
+
+            if (entry.type === "tree") {
+              var details = document.createElement("details");
+              details.className = "folder";
+              if (depth < 2) details.open = true;
+
+              var summary = document.createElement("summary");
+              summary.innerHTML = '<span class="icon-folder">DIR</span><span>' + entry.name + "</span>";
+              details.appendChild(summary);
+
+              details.appendChild(renderNode(entry, depth + 1));
+              li.appendChild(details);
+            } else {
+              var row = document.createElement("div");
+              row.className = "file-row";
+
+              var icon = document.createElement("span");
+              icon.className = "icon-file";
+              icon.textContent = "FILE";
+              row.appendChild(icon);
+
+              var link = document.createElement("a");
+              link.className = "file-link";
+              link.href = "./viewer.html?path=" + encodeURIComponent(entry.path);
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              link.textContent = entry.name;
+              link.title = entry.path;
+              row.appendChild(link);
+
+              li.appendChild(row);
+            }
+
+            wrapper.appendChild(li);
+          });
+
+          return wrapper;
+        }
+
+        function render(paths) {
+          var tree = buildTree(paths);
+          explorerTree.innerHTML = "";
+          explorerTree.appendChild(renderNode(tree, 0));
+          fileCount.textContent = "Showing " + paths.length + " file" + (paths.length === 1 ? "" : "s");
+          explorerStatus.textContent =
+            "Auto-updated from GitHub API (branch: " + BRANCH + "). New files appear automatically.";
+        }
+
+        function applySearch() {
+          var query = (searchInput.value || "").trim().toLowerCase();
+          if (!query) {
+            render(allFiles);
+            return;
+          }
+          var filtered = allFiles.filter(function (path) {
+            return path.toLowerCase().indexOf(query) !== -1;
+          });
+          render(filtered);
+          explorerStatus.textContent =
+            "Filtered view for '" + query + "'. Click any file to open a reader tab.";
+        }
+
+        searchInput.addEventListener("input", applySearch);
+
+        fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/git/trees/" + BRANCH + "?recursive=1", {
+          headers: { Accept: "application/vnd.github+json" }
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("tree-fetch-failed");
+            return res.json();
+          })
+          .then(function (data) {
+            var tree = (data && data.tree) || [];
+            allFiles = tree
+              .filter(function (item) {
+                return item && item.type === "blob" && typeof item.path === "string";
+              })
+              .map(function (item) {
+                return item.path;
+              })
+              .sort(function (a, b) {
+                return a.localeCompare(b);
+              });
+
+            render(allFiles);
+          })
+          .catch(function () {
+            explorerStatus.textContent =
+              "Unable to fetch repository tree from GitHub API. Open the repository directly if this continues.";
+            fileCount.textContent = "Explorer unavailable";
+            explorerTree.innerHTML =
+              '<p class="muted">Fallback: <a class="file-link" href="https://github.com/' +
+              OWNER +
+              "/" +
+              REPO +
+              '/tree/' +
+              BRANCH +
+              '" target="_blank" rel="noopener noreferrer">Open repository tree on GitHub</a></p>';
+          });
+      })();
+    </script>
   </body>
 </html>

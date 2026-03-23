@@ -6,22 +6,22 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://raw.githubusercontent.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
     />
-    <title>Document Viewer | AI Coding Bible</title>
-    <meta name="description" content="Read AI Coding Bible documentation in a clean static viewer." />
+    <title>File Viewer | AI Coding Bible</title>
+    <meta name="description" content="Read AI Coding Bible repository files in a clean static viewer." />
     <meta name="robots" content="index,follow" />
     <link id="canonical" rel="canonical" href="https://bible.osipov.uk/docs/viewer.html" />
 
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Document Viewer | AI Coding Bible" />
-    <meta property="og:description" content="Read handbook documentation pages." />
+    <meta property="og:title" content="File Viewer | AI Coding Bible" />
+    <meta property="og:description" content="Read repository files in a clean viewer." />
     <meta property="og:url" content="https://bible.osipov.uk/docs/viewer.html" />
     <meta property="og:image" content="https://bible.osipov.uk/preview.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Document Viewer | AI Coding Bible" />
-    <meta name="twitter:description" content="Read handbook documentation pages." />
+    <meta name="twitter:title" content="File Viewer | AI Coding Bible" />
+    <meta name="twitter:description" content="Read repository files in a clean viewer." />
     <meta name="twitter:image" content="https://bible.osipov.uk/preview.png" />
 
     <script id="breadcrumb-schema" type="application/ld+json"></script>
@@ -34,7 +34,7 @@
         color: #f4f5f8;
       }
       .container {
-        width: min(1100px, 94vw);
+        width: min(1120px, 94vw);
         margin: 0 auto;
         padding: 2rem 0 3rem;
       }
@@ -46,6 +46,7 @@
       }
       h1 {
         margin: 0.7rem 0;
+        overflow-wrap: anywhere;
       }
       .actions {
         display: flex;
@@ -76,16 +77,19 @@
       .muted {
         color: #b1b5c3;
       }
+      .error {
+        color: #f2b8b8;
+      }
     </style>
   </head>
   <body>
     <main class="container">
-      <nav class="crumbs"><a href="../">Home</a> / <a href="./">Documentation</a> / <span id="crumbDoc">Document</span></nav>
-      <h1 id="title">Document Viewer</h1>
-      <p class="muted" id="subtitle">Loading document...</p>
+      <nav class="crumbs"><a href="../">Home</a> / <a href="./">Repository Explorer</a> / <span id="crumbFile">File</span></nav>
+      <h1 id="title">File Viewer</h1>
+      <p class="muted" id="subtitle">Loading file...</p>
 
       <div class="actions">
-        <a class="btn" href="./">Back to docs</a>
+        <a class="btn" href="./">Back to explorer</a>
         <a id="githubLink" class="btn" href="https://github.com/nicolapitersky/Bible" target="_blank" rel="noopener noreferrer">Open on GitHub</a>
       </div>
 
@@ -96,39 +100,27 @@
 
     <script>
       (function () {
-        var allowed = [
-          "BOOTSTRAP.md",
-          "RETROFIT.md",
-          "PRINCIPLES.md",
-          "DESIGN_SYSTEM.md",
-          "ENVIRONMENTS.md",
-          "SECURITY.md",
-          "TOOLING.md",
-          "QUALITY.md",
-          "STRUCTURE.md",
-          "MULTI_AGENT.md",
-          "HANDBOOK_UPDATE.md",
-          "CONTRIBUTING.md",
-          "GOVERNANCE.md",
-          "README.md",
-          "SEO_AEO.md",
-          "TWO_BIBLE_MODEL.md"
-        ];
+        var OWNER = "nicolapitersky";
+        var REPO = "Bible";
+        var BRANCH = "main";
 
         var params = new URLSearchParams(window.location.search);
-        var doc = params.get("doc") || "README.md";
-        if (allowed.indexOf(doc) === -1) doc = "README.md";
+        var filePath = params.get("path") || "README.md";
 
-        var title = doc + " | AI Coding Bible";
+        if (!/^[A-Za-z0-9._\-\/]+$/.test(filePath) || filePath.indexOf("..") !== -1) {
+          filePath = "README.md";
+        }
+
+        var title = filePath + " | AI Coding Bible";
         document.title = title;
-        document.getElementById("title").textContent = doc;
-        document.getElementById("crumbDoc").textContent = doc;
-        document.getElementById("subtitle").textContent = "Static reader view. For rich markdown rendering, use GitHub.";
+        document.getElementById("title").textContent = filePath;
+        document.getElementById("crumbFile").textContent = filePath;
+        document.getElementById("subtitle").textContent = "Static reader view sourced from GitHub main branch.";
 
-        var canonical = "https://bible.osipov.uk/docs/viewer.html?doc=" + encodeURIComponent(doc);
+        var canonical = "https://bible.osipov.uk/docs/viewer.html?path=" + encodeURIComponent(filePath);
         document.getElementById("canonical").setAttribute("href", canonical);
 
-        var github = "https://github.com/nicolapitersky/Bible/blob/main/" + encodeURIComponent(doc);
+        var github = "https://github.com/" + OWNER + "/" + REPO + "/blob/" + BRANCH + "/" + filePath;
         document.getElementById("githubLink").setAttribute("href", github);
 
         var schema = {
@@ -136,15 +128,15 @@
           "@graph": [
             {
               "@type": "Organization",
-              "name": "AI Coding Bible",
-              "url": "https://bible.osipov.uk/"
+              name: "AI Coding Bible",
+              url: "https://bible.osipov.uk/"
             },
             {
               "@type": "BreadcrumbList",
-              "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://bible.osipov.uk/" },
-                { "@type": "ListItem", "position": 2, "name": "Documentation", "item": "https://bible.osipov.uk/docs/" },
-                { "@type": "ListItem", "position": 3, "name": doc, "item": canonical }
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://bible.osipov.uk/" },
+                { "@type": "ListItem", position: 2, name: "Repository Explorer", item: "https://bible.osipov.uk/docs/" },
+                { "@type": "ListItem", position: 3, name: filePath, item: canonical }
               ]
             }
           ]
@@ -154,17 +146,17 @@
         var metaPairs = [
           ["meta[property='og:title']", title],
           ["meta[name='twitter:title']", title],
-          ["meta[property='og:description']", "Read " + doc + " in AI Coding Bible."],
-          ["meta[name='twitter:description']", "Read " + doc + " in AI Coding Bible."],
+          ["meta[property='og:description']", "Read " + filePath + " in AI Coding Bible."],
+          ["meta[name='twitter:description']", "Read " + filePath + " in AI Coding Bible."],
           ["meta[property='og:url']", canonical],
-          ["meta[name='description']", "Read " + doc + " in AI Coding Bible static document viewer."]
+          ["meta[name='description']", "Read " + filePath + " in AI Coding Bible static file viewer."]
         ];
         metaPairs.forEach(function (pair) {
           var el = document.querySelector(pair[0]);
           if (el) el.setAttribute("content", pair[1]);
         });
 
-        fetch("https://raw.githubusercontent.com/nicolapitersky/Bible/main/" + doc)
+        fetch("https://raw.githubusercontent.com/" + OWNER + "/" + REPO + "/" + BRANCH + "/" + filePath)
           .then(function (res) {
             if (!res.ok) throw new Error("not-found");
             return res.text();
@@ -173,8 +165,12 @@
             document.getElementById("content").textContent = text;
           })
           .catch(function () {
-            document.getElementById("content").textContent =
-              "Unable to load " + doc + ". Use 'Open on GitHub' or return to /docs/.";
+            var content = document.getElementById("content");
+            content.textContent =
+              "Unable to load file: " +
+              filePath +
+              "\n\nUse 'Open on GitHub' to read it directly or return to the explorer.";
+            content.className = "error";
           });
       })();
     </script>

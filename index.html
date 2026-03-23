@@ -6,93 +6,47 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      content="default-src 'self'; img-src 'self' data: https://www.transparenttextures.com https://bible.osipov.uk; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
     />
-    <title>AI Coding Bible | Agentic Software Engineering Handbook by Igor Osipov</title>
+    <title>AI Coding Bible | Complete Governance Framework for AI-assisted Software Development</title>
     <meta
       name="description"
-      content="AI Coding Bible is a complete handbook for AI-assisted software delivery: bootstrap, retrofit, security, quality, tooling, design system, and multi-agent workflows."
+      content="AI Coding Bible is a complete governance framework for AI-assisted software development with enforceable safety, architecture, and operational learning controls."
     />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <link rel="canonical" href="https://bible.osipov.uk/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AI Coding Bible" />
-    <meta property="og:title" content="AI Coding Bible | Agentic Software Engineering Handbook" />
+    <meta property="og:title" content="AI Coding Bible | Complete Governance Framework" />
     <meta
       property="og:description"
-      content="A practical source of truth for AI coding teams: architecture, quality, security, environment safety, and project execution standards."
+      content="A complete governance framework for AI-assisted software development: bootstrap, retrofit, safety enforcement, and learning loops."
     />
     <meta property="og:url" content="https://bible.osipov.uk/" />
     <meta property="og:image" content="https://bible.osipov.uk/preview.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AI Coding Bible | Agentic Software Engineering Handbook" />
+    <meta name="twitter:title" content="AI Coding Bible | Complete Governance Framework" />
     <meta
       name="twitter:description"
-      content="A complete handbook for reliable AI-assisted software delivery across teams and stacks."
+      content="Governance framework for AI-assisted software development with instruction and enforcement layers."
     />
     <meta name="twitter:image" content="https://bible.osipov.uk/preview.png" />
     <meta name="theme-color" content="#1a1a22" />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": "https://bible.osipov.uk/#organization",
-            "name": "AI Coding Bible",
-            "url": "https://bible.osipov.uk/",
-            "founder": {
-              "@type": "Person",
-              "name": "Igor Osipov",
-              "url": "https://www.osipov.uk"
-            },
-            "sameAs": [
-              "https://github.com/nicolapitersky/Bible",
-              "https://www.linkedin.com/in/igorosipov/"
-            ],
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "email": "support@osipov.uk",
-              "contactType": "customer support"
-            }
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://bible.osipov.uk/#website",
-            "url": "https://bible.osipov.uk/",
-            "name": "AI Coding Bible",
-            "publisher": {
-              "@id": "https://bible.osipov.uk/#organization"
-            }
-          },
-          {
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://bible.osipov.uk/"
-              }
-            ]
-          }
-        ]
-      }
-    </script>
 
     <style>
       :root {
         --bg: #1a1a22;
         --bg-elev: #24242f;
+        --bg-elev-2: #2d2d39;
         --text: #f4f5f8;
         --muted: #b1b5c3;
         --primary: #b8a484;
         --primary-strong: #cab590;
         --border: #373747;
         --ok: #7ec7a0;
+        --warn: #e1bf81;
         --shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
       }
       * {
@@ -161,7 +115,7 @@
         color: var(--primary-strong);
       }
       .hero {
-        padding: 5.2rem 0 2.6rem;
+        padding: 4.8rem 0 2.4rem;
       }
       .kicker {
         color: var(--primary-strong);
@@ -171,14 +125,14 @@
         font-size: 0.75rem;
       }
       h1 {
-        font-size: clamp(2.1rem, 5vw, 4.1rem);
+        font-size: clamp(2rem, 4.7vw, 3.7rem);
         line-height: 1.08;
         margin: 0.8rem 0 0;
       }
       .hero p {
         color: var(--muted);
-        font-size: clamp(1rem, 1.8vw, 1.2rem);
-        max-width: 840px;
+        font-size: clamp(1rem, 1.8vw, 1.16rem);
+        max-width: 860px;
         margin-top: 1.2rem;
       }
       .cta-row {
@@ -230,49 +184,53 @@
       .metric strong {
         display: block;
         color: var(--primary-strong);
-        font-size: 1.25rem;
+        font-size: 1.15rem;
       }
       .metric span {
         color: var(--muted);
         font-size: 0.88rem;
       }
       .section {
-        padding: 2.1rem 0;
+        padding: 2rem 0;
       }
       .section h2 {
         margin: 0;
-        font-size: clamp(1.6rem, 2.7vw, 2.4rem);
+        font-size: clamp(1.5rem, 2.5vw, 2.2rem);
       }
       .section-sub {
         color: var(--muted);
-        max-width: 850px;
+        max-width: 900px;
         margin-top: 0.7rem;
       }
-      .author {
-        background: linear-gradient(135deg, rgba(184, 164, 132, 0.08), rgba(184, 164, 132, 0.02));
-        border: 1px solid rgba(184, 164, 132, 0.26);
-        border-radius: 16px;
-        padding: 1.3rem;
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 1rem;
-        box-shadow: var(--shadow);
+      .panel {
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.1rem;
+        margin-top: 0.9rem;
       }
-      .author p,
-      .author li {
+      .panel h3 {
+        margin: 0 0 0.55rem;
+        font-size: 1.05rem;
+      }
+      .panel p,
+      .panel li {
         color: var(--muted);
       }
-      .author ul {
-        margin: 0.65rem 0 0;
+      .panel ul {
+        margin: 0.5rem 0 0;
         padding-left: 1.1rem;
       }
-      .author-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
+      .panel strong {
+        color: var(--text);
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
       }
       .toolbar {
-        margin-top: 1.25rem;
+        margin-top: 1.1rem;
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 0.7rem;
@@ -291,32 +249,79 @@
         align-self: center;
         font-size: 0.9rem;
       }
-      .docs-grid {
-        margin-top: 0.85rem;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.8rem;
-      }
-      .doc {
+      .explorer {
+        margin-top: 0.9rem;
         background: var(--bg-elev);
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 1rem;
+        padding: 0.85rem;
+      }
+      .tree-root {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .tree-children {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 0 1rem;
+        border-left: 1px dashed #454559;
+      }
+      .folder {
+        margin: 0.25rem 0;
+      }
+      .folder > summary {
+        list-style: none;
+        cursor: pointer;
+        color: var(--text);
         display: flex;
-        flex-direction: column;
-        min-height: 200px;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.18rem 0.12rem;
+        border-radius: 7px;
       }
-      .doc-title {
-        font-weight: 700;
+      .folder > summary::-webkit-details-marker {
+        display: none;
       }
-      .doc-desc {
+      .folder > summary:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .folder > summary::before {
+        content: "▸";
+        color: var(--primary-strong);
+        font-size: 0.7rem;
+        transform: translateY(-1px);
+      }
+      .folder[open] > summary::before {
+        content: "▾";
+      }
+      .file-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.19rem 0.12rem;
+        border-radius: 7px;
+        margin: 0.12rem 0;
+      }
+      .file-row:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .icon-folder {
+        color: var(--warn);
+      }
+      .icon-file {
+        color: var(--ok);
+      }
+      .file-link {
+        text-decoration: none;
+        color: #dce0eb;
+      }
+      .file-link:hover,
+      .file-link:focus-visible {
+        color: var(--primary-strong);
+      }
+      .muted {
         color: var(--muted);
-        margin-top: 0.55rem;
-        font-size: 0.93rem;
-      }
-      .doc-actions {
-        margin-top: auto;
-        padding-top: 0.9rem;
       }
       .footer {
         padding: 2.6rem 0 3rem;
@@ -335,11 +340,10 @@
         color: var(--ok);
       }
       @media (max-width: 980px) {
-        .metrics,
-        .docs-grid {
+        .metrics {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-        .author {
+        .two-col {
           grid-template-columns: 1fr;
         }
       }
@@ -349,8 +353,7 @@
           display: none;
         }
         .toolbar,
-        .metrics,
-        .docs-grid {
+        .metrics {
           grid-template-columns: 1fr;
         }
       }
@@ -361,12 +364,13 @@
       <div class="container topbar-inner">
         <div class="brand">
           AI Coding Bible
-          <small>Agentic Engineering Handbook</small>
+          <small>Agentic Engineering Governance</small>
         </div>
         <nav class="nav-links" aria-label="Primary">
-          <a href="#about">About</a>
-          <a href="#author">Author</a>
-          <a href="#documents">Documents</a>
+          <a href="#about">What It Is</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#core-files">Core Files</a>
+          <a href="#explorer">File Explorer</a>
           <a href="https://github.com/nicolapitersky/Bible" target="_blank" rel="noopener noreferrer">GitHub</a>
         </nav>
       </div>
@@ -374,140 +378,285 @@
 
     <main>
       <section class="hero container" id="about">
-        <div class="kicker">Complete development handbook for AI coding teams</div>
-        <h1>AI Coding Bible: the source of truth for AI-assisted software delivery.</h1>
+        <div class="kicker">Complete governance framework for AI-assisted software development</div>
+        <h1>The Bible is a binding contract for every AI agent that touches your projects.</h1>
         <p>
-          AI Coding Bible standardizes how teams ship software with coding agents. It provides practical guidance for
-          project bootstrap, legacy retrofit, environment safety, security controls, quality pipelines, design systems,
-          and multi-agent coordination. Use it to reduce regressions, avoid wrong-environment changes, and increase
-          predictable delivery velocity.
+          AI agents are amnesiac, powerful, and capable of expensive mistakes. Without a structured contract that every
+          agent reads before writing code, teams get inconsistency, security incidents, wrong-environment writes, and
+          compounding technical debt. The Bible is that contract.
+        </p>
+        <p>
+          It is not a style guide. It is not optional. It is the single source of truth governing Claude Code, Cursor,
+          Codex, Windsurf, Firebase Studio, and any other AI agent across your delivery pipeline.
         </p>
         <div class="cta-row">
           <a class="btn btn-primary" href="https://github.com/nicolapitersky/Bible" target="_blank" rel="noopener noreferrer"
             >Open GitHub Repository</a
           >
-          <a class="btn btn-ghost" href="./docs/">Read Documentation Pages</a>
+          <a class="btn btn-ghost" href="./docs/">Open Full File Explorer</a>
         </div>
 
         <div class="metrics" aria-label="Project metrics">
-          <div class="metric"><strong>v2.0.0</strong><span>Current public release</span></div>
-          <div class="metric"><strong>16+</strong><span>Core handbook documents</span></div>
-          <div class="metric"><strong>14</strong><span>Stack-specific addendums</span></div>
-          <div class="metric"><strong>MIT</strong><span>Commercial and internal use allowed</span></div>
+          <div class="metric"><strong>2 Layers</strong><span>Public Bible and Project Bible model</span></div>
+          <div class="metric"><strong>15 Stacks</strong><span>Stack-specific addendums</span></div>
+          <div class="metric"><strong>Instruction + Enforcement</strong><span>Both required for safety</span></div>
+          <div class="metric"><strong>MIT</strong><span>Commercial and internal reuse allowed</span></div>
         </div>
       </section>
 
-      <section class="section container" id="author">
-        <h2>Author</h2>
+      <section class="section container" id="architecture">
+        <h2>The Architecture: Two Layers</h2>
         <p class="section-sub">
-          Created and maintained by Igor Osipov. The handbook encodes an execution-focused operating model for
-          software teams working with AI tools across product, platform, and cloud delivery.
+          Inheritance flows one way: Public Bible to Project Bible. Learnings flow back only after anonymisation and
+          human review.
         </p>
-        <article class="author">
-          <div>
-            <h3>Igor Osipov</h3>
+
+        <div class="two-col">
+          <article class="panel">
+            <h3>Layer 1: Public Bible (`nicolapitersky/Bible`)</h3>
             <p>
-              Technology practitioner focused on resilient delivery systems. The Bible emphasizes practical controls:
-              environment manifests, quality gates, secure defaults, explicit handoffs, and repeatable project setup.
+              Universal, public, and anonymised. Holds principles, patterns, templates, and scripts that apply to any
+              project. Contains zero project-specific data and is maintained through automated monthly updates and
+              quarterly manual reviews.
             </p>
-            <ul>
-              <li>Operationally focused AI engineering standards</li>
-              <li>Clear rules for safety, quality, and ownership</li>
-              <li>Reusable guidance for teams and client work</li>
-            </ul>
-          </div>
-          <div>
-            <h3>Connect</h3>
-            <div class="author-links">
-              <a class="btn btn-ghost" href="https://www.osipov.uk" target="_blank" rel="noopener noreferrer">Website</a>
-              <a class="btn btn-ghost" href="https://www.linkedin.com/in/igorosipov/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a class="btn btn-ghost" href="mailto:support@osipov.uk">support@osipov.uk</a>
-            </div>
-          </div>
+          </article>
+          <article class="panel">
+            <h3>Layer 2: Project Bible (inside each project repo)</h3>
+            <p>
+              Generated by Bootstrap or Retrofit. Includes project-specific manifests, architecture decisions, learning
+              pipeline files, project `AGENTS.md`, and IDE rules. This is where real environment IDs and operational
+              details live.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section container" id="core-files">
+        <h2>The Core Files and What Each Does</h2>
+        <p class="section-sub">
+          The handbook is split into orchestrators, governance laws, templates, stack addendums, and executable
+          tooling.
+        </p>
+
+        <article class="panel">
+          <ul>
+            <li><strong>`BOOTSTRAP.md`</strong> - master orchestrator prompt for new projects across six phases.</li>
+            <li><strong>`RETROFIT.md`</strong> - audit-first adoption for existing projects, with debt and migration plans.</li>
+            <li><strong>`PRINCIPLES.md`</strong> - 12 non-negotiable engineering laws.</li>
+            <li><strong>`AGENTS_TEMPLATE.md`</strong> - project-level constitution template with safety, quality, and execution rules.</li>
+            <li><strong>`TWO_BIBLE_MODEL.md`</strong> - architecture and anonymised learning flow between layers.</li>
+            <li><strong>`MULTI_AGENT.md`</strong> - parallel agent ownership, handoff report format, and merge protocol.</li>
+            <li><strong>`DESIGN_SYSTEM.md`</strong> - token-first design system rules; no hardcoded values.</li>
+            <li><strong>`HANDBOOK_UPDATE.md`</strong> - monthly automation and quarterly review process.</li>
+            <li><strong>`stacks/`</strong> - stack-specific addendums that extend core governance rules.</li>
+            <li><strong>`scripts/`</strong> - bootstrap, retrofit audit, env verification, token generation, quality checks.</li>
+            <li><strong>`configs/`</strong> - baseline configs and runtime enforcement hooks.</li>
+            <li><strong>`examples/`</strong> - reference implementations for Astro and Next.js + Firebase + Stripe.</li>
+          </ul>
+        </article>
+
+        <article class="panel">
+          <h3>The Two Governance Layers (Critical Distinction)</h3>
+          <p>
+            `AGENTS.md` is the instruction layer. Security-critical controls also require an enforcement layer:
+            `.claude/hooks/`, `.claude/settings.json`, and task-level constraints. Instructions without enforcement can
+            be bypassed by context loss or prompt injection.
+          </p>
+        </article>
+
+        <article class="panel">
+          <h3>Scratchpad / Learning Pipeline</h3>
+          <p>
+            Daily work -> `/scratchpad:learn` -> `docs/scratchpad/` raw notes -> `/scratchpad:summary` -> `DAILY.md`
+            -> `/scratchpad:export` -> anonymised `EXPORT.md` -> `/bible:update` pull request to Public Bible.
+          </p>
         </article>
       </section>
 
-      <section class="section container" id="documents">
-        <h2>Document Explorer</h2>
+      <section class="section container" id="explorer">
+        <h2>Repository File Explorer</h2>
         <p class="section-sub">
-          Open core documents quickly. Use search for topics such as bootstrap, security, quality, cloud safety,
-          design system, or multi-agent workflow.
+          Full auto-updated folder view from `main`, similar to file explorer behavior. Click any file to open a reader
+          in a new tab.
         </p>
 
         <div class="toolbar">
-          <label for="docSearch" style="position: absolute; left: -9999px">Search documents</label>
+          <label for="fileSearch" style="position: absolute; left: -9999px">Search files</label>
           <input
-            id="docSearch"
+            id="fileSearch"
             class="search"
             type="search"
-            placeholder="Search docs by title or topic"
+            placeholder="Search by path or filename"
             autocomplete="off"
           />
-          <div id="docCount" class="count">Showing 0 documents</div>
+          <div id="fileCount" class="count">Loading files...</div>
         </div>
 
-        <div id="docsGrid" class="docs-grid">
-          <article class="doc" data-q="bootstrap setup new projects">
-            <div class="doc-title">BOOTSTRAP.md</div>
-            <p class="doc-desc">New-project setup and orchestration workflow.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/viewer.html?doc=BOOTSTRAP.md">Read</a></div>
-          </article>
-          <article class="doc" data-q="retrofit migration existing projects audit">
-            <div class="doc-title">RETROFIT.md</div>
-            <p class="doc-desc">Adopt Bible in an active repository with audit-first controls.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/viewer.html?doc=RETROFIT.md">Read</a></div>
-          </article>
-          <article class="doc" data-q="security owasp secrets auth">
-            <div class="doc-title">SECURITY.md</div>
-            <p class="doc-desc">Security baseline and secure-by-default implementation rules.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/viewer.html?doc=SECURITY.md">Read</a></div>
-          </article>
-          <article class="doc" data-q="quality ci cd testing review">
-            <div class="doc-title">QUALITY.md</div>
-            <p class="doc-desc">Quality loops, release checks, and production readiness controls.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/viewer.html?doc=QUALITY.md">Read</a></div>
-          </article>
-          <article class="doc" data-q="design system ui ux tokens">
-            <div class="doc-title">DESIGN_SYSTEM.md</div>
-            <p class="doc-desc">UI and design-token governance for consistent product interfaces.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/viewer.html?doc=DESIGN_SYSTEM.md">Read</a></div>
-          </article>
-          <article class="doc" data-q="multi agent handoff collaboration">
-            <div class="doc-title">MULTI_AGENT.md</div>
-            <p class="doc-desc">Handoff protocol and context model for multi-agent teams.</p>
-            <div class="doc-actions"><a class="btn btn-ghost" href="./docs/">Browse all docs</a></div>
-          </article>
-        </div>
+        <section class="explorer">
+          <div id="explorerStatus" class="muted">Fetching repository tree...</div>
+          <div id="explorerTree" aria-live="polite"></div>
+        </section>
       </section>
     </main>
 
     <footer class="footer">
       <div class="container footer-row">
         <span>AI Coding Bible - MIT License</span>
-        <span class="ok">GitHub Pages static deployment ready</span>
+        <span class="ok">GitHub tree-powered explorer enabled</span>
       </div>
     </footer>
 
     <script>
       (function () {
-        var input = document.getElementById("docSearch");
-        var cards = Array.prototype.slice.call(document.querySelectorAll(".doc"));
-        var count = document.getElementById("docCount");
+        var OWNER = "nicolapitersky";
+        var REPO = "Bible";
+        var BRANCH = "main";
 
-        function refresh() {
-          var q = (input.value || "").toLowerCase().trim();
-          var visible = 0;
-          cards.forEach(function (card) {
-            var text = (card.textContent + " " + (card.getAttribute("data-q") || "")).toLowerCase();
-            var show = !q || text.indexOf(q) !== -1;
-            card.style.display = show ? "flex" : "none";
-            if (show) visible += 1;
-          });
-          count.textContent = "Showing " + visible + " document" + (visible === 1 ? "" : "s");
+        var searchInput = document.getElementById("fileSearch");
+        var fileCount = document.getElementById("fileCount");
+        var explorerStatus = document.getElementById("explorerStatus");
+        var explorerTree = document.getElementById("explorerTree");
+
+        var allFiles = [];
+
+        function sortEntries(a, b) {
+          if (a.type !== b.type) return a.type === "tree" ? -1 : 1;
+          return a.name.localeCompare(b.name);
         }
 
-        input.addEventListener("input", refresh);
-        refresh();
+        function buildTree(paths) {
+          var root = { name: "", type: "tree", children: {} };
+          paths.forEach(function (path) {
+            var parts = path.split("/");
+            var node = root;
+            for (var i = 0; i < parts.length; i += 1) {
+              var part = parts[i];
+              var isFile = i === parts.length - 1;
+              if (!node.children[part]) {
+                node.children[part] = {
+                  name: part,
+                  type: isFile ? "blob" : "tree",
+                  path: parts.slice(0, i + 1).join("/"),
+                  children: isFile ? null : {}
+                };
+              }
+              node = node.children[part];
+            }
+          });
+          return root;
+        }
+
+        function renderNode(node, depth) {
+          var wrapper = document.createElement("ul");
+          wrapper.className = depth === 0 ? "tree-root" : "tree-children";
+
+          var entries = Object.keys(node.children || {})
+            .map(function (key) {
+              return node.children[key];
+            })
+            .sort(sortEntries);
+
+          entries.forEach(function (entry) {
+            var li = document.createElement("li");
+
+            if (entry.type === "tree") {
+              var details = document.createElement("details");
+              details.className = "folder";
+              if (depth < 2) details.open = true;
+
+              var summary = document.createElement("summary");
+              summary.innerHTML = '<span class="icon-folder">DIR</span><span>' + entry.name + "</span>";
+              details.appendChild(summary);
+
+              details.appendChild(renderNode(entry, depth + 1));
+              li.appendChild(details);
+            } else {
+              var row = document.createElement("div");
+              row.className = "file-row";
+
+              var icon = document.createElement("span");
+              icon.className = "icon-file";
+              icon.textContent = "FILE";
+              row.appendChild(icon);
+
+              var link = document.createElement("a");
+              link.className = "file-link";
+              link.href = "./docs/viewer.html?path=" + encodeURIComponent(entry.path);
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              link.textContent = entry.name;
+              link.title = entry.path;
+              row.appendChild(link);
+
+              li.appendChild(row);
+            }
+
+            wrapper.appendChild(li);
+          });
+
+          return wrapper;
+        }
+
+        function render(paths) {
+          var tree = buildTree(paths);
+          explorerTree.innerHTML = "";
+          explorerTree.appendChild(renderNode(tree, 0));
+          fileCount.textContent = "Showing " + paths.length + " file" + (paths.length === 1 ? "" : "s");
+          explorerStatus.textContent =
+            "Auto-updated from GitHub API (branch: " + BRANCH + "). New files appear automatically.";
+        }
+
+        function applySearch() {
+          var query = (searchInput.value || "").trim().toLowerCase();
+          if (!query) {
+            render(allFiles);
+            return;
+          }
+          var filtered = allFiles.filter(function (path) {
+            return path.toLowerCase().indexOf(query) !== -1;
+          });
+          render(filtered);
+          explorerStatus.textContent =
+            "Filtered view for '" + query + "'. Click any file to open a reader tab.";
+        }
+
+        searchInput.addEventListener("input", applySearch);
+
+        fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/git/trees/" + BRANCH + "?recursive=1", {
+          headers: { Accept: "application/vnd.github+json" }
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("tree-fetch-failed");
+            return res.json();
+          })
+          .then(function (data) {
+            var tree = (data && data.tree) || [];
+            allFiles = tree
+              .filter(function (item) {
+                return item && item.type === "blob" && typeof item.path === "string";
+              })
+              .map(function (item) {
+                return item.path;
+              })
+              .sort(function (a, b) {
+                return a.localeCompare(b);
+              });
+
+            render(allFiles);
+          })
+          .catch(function () {
+            explorerStatus.textContent =
+              "Unable to fetch repository tree from GitHub API. Open the repository directly if this continues.";
+            fileCount.textContent = "Explorer unavailable";
+            explorerTree.innerHTML =
+              '<p class="muted">Fallback: <a class="file-link" href="https://github.com/' +
+              OWNER +
+              "/" +
+              REPO +
+              '/tree/' +
+              BRANCH +
+              '" target="_blank" rel="noopener noreferrer">Open repository tree on GitHub</a></p>';
+          });
       })();
     </script>
   </body>
