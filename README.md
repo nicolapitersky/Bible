@@ -12,6 +12,28 @@
 
 This is not a style guide. It is a **binding contract** between the human director and every AI development agent. It exists because AI agents are powerful but amnesiac — they forget context between sessions, reinvent tools that already exist, write to the wrong cloud project, and produce inconsistent UI. This handbook prevents all of that by establishing laws, not suggestions.
 
+## Executive Summary (1 page)
+- **Purpose:** Governance and guardrails for AI + human engineering: environment safety, agent handoffs, design tokens, security, quality, and stack patterns.
+- **Who it serves:** Studios and teams running multiple projects with AI copilots/agents (Codex, Claude Code, Cursor, Windsurf) who need consistency and environment protection.
+- **Problems solved:** Wrong-environment writes, duplicated tools, ad-hoc UI, missing tests/CI, unclear agent prompts, fragmented learnings.
+- **What you get Day 1:** One-command bootstrap that asks for project facts, locks `.env.manifest`, generates AGENTS.md + IDE rules, CI/security workflows, design tokens, scratchpad, and tool registry.
+- **Model:** Public Bible (this repo) stays generic; each project gets a private Project Bible layer with real IDs, ADRs, tokens, and scratchpad learnings.
+- **Scope in/out:** In-scope web/mobile stacks listed in `stacks/`; out-of-scope today: data pipelines, infra beyond listed stacks, bespoke ML training.
+- **License & reuse:** MIT; safe for commercial/internal projects. Keep project-specific data in the Project Bible layer.
+- **Adoption path:** Pilot retrofit on one existing repo, bootstrap the next greenfield, then standardise across the studio.
+
+## Quickstart Checklist (stakeholder-friendly)
+1. Pick path: new project → `scripts/bootstrap.sh`; existing repo → `scripts/retrofit-audit.js` then `RETROFIT.md`.
+2. Clone repo locally; run the chosen script from project root.
+3. Provide project identity + environment IDs when prompted; review the generated `.env.manifest` before confirming.
+4. Open the generated `AGENTS.md` (project constitution) and commit it with `.env.example` and CI/security workflows.
+5. For AI IDEs, run `scripts/generate-ide-rules.js` to create `.cursorrules`, `.windsurfrules`, `CLAUDE.md`.
+6. Regenerate design tokens anytime with `npm run tokens` (added by bootstrap).
+7. Read the relevant stack file in `stacks/` (e.g., `stacks/nextjs.md`, `stacks/firebase.md`) before coding.
+8. Enforce weekly quality by keeping `.github/workflows/weekly-quality.yml` active and reviewing outputs.
+9. Capture learnings in `docs/scratchpad/DAILY.md`; promote anonymised lessons via the Two-Bible pipeline when ready.
+10. Add new tools only after checking `TOOLING.md` and logging approvals in `docs/TOOL_REGISTRY.md`.
+
 ## One-Command Bootstrap
 
 ```bash
@@ -100,8 +122,8 @@ git clone https://github.com/nicolapitersky/Bible.git /tmp/handbook
 
 | Directory | What it demonstrates |
 |-----------|---------------------|
-| `examples/astro-landing-bootstrap/` | Complete Astro 5 marketing site — token-based, SEO-complete, Lighthouse-ready. `pnpm install && pnpm dev` works. |
-| `examples/nextjs-firebase-bootstrap/` | Reference output for Next.js + Firebase + Stripe bootstrap. |
+| [`examples/astro-landing-bootstrap/`](examples/astro-landing-bootstrap/) | Complete Astro 5 marketing site — token-based, SEO-complete, Lighthouse-ready. `pnpm install && pnpm dev` works. |
+| [`examples/nextjs-firebase-bootstrap/`](examples/nextjs-firebase-bootstrap/) | Reference output for Next.js + Firebase + Stripe bootstrap. |
 
 ---
 
